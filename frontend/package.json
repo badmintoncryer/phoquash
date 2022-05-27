@@ -20,7 +20,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prepare": "cd .. && husky install frontend/.husky",
+    "lint-staged": "lint-staged"
   },
   "eslintConfig": {
     "extends": [
@@ -39,5 +41,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "husky": "^8.0.1",
+    "lint-staged": "^12.4.2",
+    "prettier": "^2.6.2"
   }
 }
