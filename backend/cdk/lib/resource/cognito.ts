@@ -1,13 +1,25 @@
 import { CfnOutput, Stack, StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as cognito from "aws-cdk-lib/aws-cognito";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 const facebookClientId = process.env.FACEBOOK_CLIENT_ID || "";
 const facebookClientSecret = process.env.FACEBOOK_CLIENT_SECRET || "";
+const googleClientId = process.env.GOOGLE_CLIENT_ID || "";
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET || "";
 const applicationUrl = process.env.APPLICATION_URL || "https://localhost:3000";
 
-if (!facebookClientId || !facebookClientSecret) {
-  throw new Error("FACEBOOK_CLIENT_ID and FACEBOOK_CLIENT_SECRET must be set");
+if (
+  !facebookClientId ||
+  !facebookClientSecret ||
+  !googleClientId ||
+  !googleClientSecret
+) {
+  throw new Error(
+    "Missing environment variables: FACEBOOK_CLIENT_ID, FACEBOOK_CLIENT_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET"
+  );
 }
 
 export class Cognito {
@@ -17,7 +29,8 @@ export class Cognito {
   public clientReadAttributes: cognito.ClientAttributes;
   public client: cognito.UserPoolClient;
   public clientId: string;
-  public provider: cognito.UserPoolIdentityProviderFacebook;
+  public facebookProvider: cognito.UserPoolIdentityProviderFacebook;
+  public googleProvider: cognito.UserPoolIdentityProviderGoogle;
   public signInUrl: string;
 
   constructor() {}
@@ -62,13 +75,14 @@ export class Cognito {
       supportedIdentityProviders: [
         cognito.UserPoolClientIdentityProvider.COGNITO,
         cognito.UserPoolClientIdentityProvider.FACEBOOK,
+        cognito.UserPoolClientIdentityProvider.GOOGLE,
       ],
       readAttributes: this.clientReadAttributes,
       writeAttributes: this.clientWriteAttributes,
     });
     this.clientId = this.client.userPoolClientId;
 
-    this.provider = new cognito.UserPoolIdentityProviderFacebook(
+    this.facebookProvider = new cognito.UserPoolIdentityProviderFacebook(
       scope,
       "Facebook",
       {
@@ -84,13 +98,30 @@ export class Cognito {
       }
     );
     // appClientとproviderを同一stackで構築する場合、依存関係を設定する必要がある
-    this.client.node.addDependency(this.provider);
+    this.client.node.addDependency(this.facebookProvider);
+
+    this.googleProvider = new cognito.UserPoolIdentityProviderGoogle(
+      scope,
+      "Google",
+      {
+        clientId: googleClientId,
+        clientSecret: googleClientSecret,
+        userPool: this.userpool,
+        scopes: ["email", "profile"],
+
+        attributeMapping: {
+          email: cognito.ProviderAttribute.GOOGLE_EMAIL,
+          givenName: cognito.ProviderAttribute.GOOGLE_NAME,
+        },
+      }
+    );
+    this.client.node.addDependency(this.googleProvider);
 
     this.signInUrl = this.domain.signInUrl(this.client, {
       redirectUri: applicationUrl, // must be a URL configured under 'callbackUrls' with the client
     });
 
-    new CfnOutput(scope, 'SignInUrl', { value: this.signInUrl })
-    new CfnOutput(scope, 'clientId', { value: this.clientId })
+    new CfnOutput(scope, "SignInUrl", { value: this.signInUrl });
+    new CfnOutput(scope, "clientId", { value: this.clientId });
   }
 }
