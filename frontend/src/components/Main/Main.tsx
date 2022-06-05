@@ -2,8 +2,11 @@ import {
   AuthEventData,
   CognitoUserAmplify,
 } from "@aws-amplify/ui-react/node_modules/@aws-amplify/ui";
+import { Home } from "components/pages/home/Home";
+import { Picture } from "components/pages/picture/Picture";
+import { TravelRecord } from "components/pages/travelRecord/TravelRecord";
 import AppBar from "components/uiParts/appBar/AppBar";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 export type MainProps = {
   signOut: ((data?: AuthEventData | undefined) => void) | undefined;
@@ -15,6 +18,14 @@ export const Main = (props: MainProps) => {
     <main>
       <BrowserRouter>
         <AppBar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/travel-record/{travelId}" element={<TravelRecord />} />
+          <Route
+            path="/travel-record/{travelId}/{pictureId}"
+            element={<Picture />}
+          />
+        </Routes>
       </BrowserRouter>
     </main>
     // <main>
