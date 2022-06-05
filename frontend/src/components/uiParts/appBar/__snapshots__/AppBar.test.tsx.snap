@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppBar componentのテスト AppBar componentのテスト 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiBox-root css-i9gxme"
+  >
+    <header
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionStatic css-hip9hq-MuiPaper-root-MuiAppBar-root"
+    >
+      <div
+        class="MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular css-hyum1k-MuiToolbar-root"
+      >
+        <div
+          class="MuiGrid-root MuiGrid-container css-1vam7s3-MuiGrid-root"
+        >
+          <div
+            class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
+          >
+            <button
+              aria-haspopup="true"
+              aria-label="menu"
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorInherit MuiIconButton-edgeStart MuiIconButton-sizeLarge css-ancrnh-MuiButtonBase-root-MuiIconButton-root"
+              tabindex="0"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                data-testid="MenuIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"
+                />
+              </svg>
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+          </div>
+          <div
+            class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
+          >
+            <img
+              alt="logo"
+              src="logo_transparent.png"
+              width="50"
+            />
+          </div>
+          <div
+            class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
+          >
+            <div
+              class="MuiTypography-root MuiTypography-h6 css-1juivf6-MuiTypography-root"
+            >
+              phoquash
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  </div>
+</DocumentFragment>
+`;
