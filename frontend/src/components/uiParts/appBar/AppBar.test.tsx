@@ -15,8 +15,7 @@ describe("AppBar componentのテスト", () => {
     // 文字表示
     screen.getByText(/phoquash/i);
     // メニューボタンを押せるかテスト
-    const user = userEvent.setup();
     const button = screen.getByRole("button");
-    await user.click(button);
+    await userEvent.click(button);
   });
 });
