@@ -2,7 +2,7 @@ import { Amplify } from "aws-amplify";
 
 import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
-import { Main } from "components/Main/Main";
+import { Main } from "components/main/Main";
 
 Amplify.configure({
   aws_project_region: process.env.REACT_APP_AWS_PROJECT_REGION,
