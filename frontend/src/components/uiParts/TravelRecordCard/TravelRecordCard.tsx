@@ -5,6 +5,8 @@ import {
   CardHeader,
   CardMedia,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import IosShareIcon from "@mui/icons-material/IosShare";
 
 export type TravelRecordCardProps = {
   title: string;
@@ -24,7 +26,12 @@ export const TravelRecordCard = (props: TravelRecordCardProps) => {
         alt={props.title}
       />
       <CardActions>
-        <Button size="small">Share</Button>
+        <Button size="small" startIcon={<IosShareIcon />}>
+          Share
+        </Button>
+        <Button size="small" color="secondary" startIcon={<DeleteIcon />}>
+          Delete
+        </Button>
       </CardActions>
     </Card>
   );
