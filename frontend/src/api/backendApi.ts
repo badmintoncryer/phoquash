@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const BACKEND_API_ROOT_URL = "http://localhost:8080/api/";
-const TRAVEL_RECORD_API_URL = BACKEND_API_ROOT_URL + "travelRecord";
+const TRAVEL_RECORD_API_URL = BACKEND_API_ROOT_URL + "travelRecord/user/";
 
 export type TravelRecord = {
   title: string;
