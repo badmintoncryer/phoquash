@@ -7,7 +7,6 @@ type UseIdTokenReturn = {
 
 /**
  * localStorageに保存されたidTokenを取得するフック
-
  *
  * @return {UseIdTokenReturn}
  */
