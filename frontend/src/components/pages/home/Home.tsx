@@ -1,6 +1,8 @@
 import { Box, Container, Grid } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import { TravelRecordCard } from "components/uiParts/TravelRecordCard/TravelRecordCard";
 import { useTravelList } from "./hooks/useTravelList";
+import { BottomRightFab } from "components/uiParts/BottomRightFab/BottomRightFab";
 
 export const Home = () => {
   const { travelList } = useTravelList();
@@ -31,6 +33,9 @@ export const Home = () => {
               </Grid>
             ))}
         </Grid>
+        <BottomRightFab>
+          <AddIcon />
+        </BottomRightFab>
       </Box>
     </Container>
   );

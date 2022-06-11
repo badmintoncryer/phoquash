@@ -20,7 +20,7 @@ export const Main = (props: MainProps) => {
         <AppBar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/travel-record/{travelId}" element={<TravelRecord />} />
+          <Route path="/travel-record/" element={<TravelRecord />} />
           <Route
             path="/travel-record/{travelId}/{pictureId}"
             element={<Picture />}
