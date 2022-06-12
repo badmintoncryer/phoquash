@@ -2,8 +2,6 @@ import { Fab, styled } from "@mui/material";
 import { FC, ReactNode } from "react";
 
 type BottomRightFabProps = {
-  // aria-label?: string,
-  // color?: "primary" | "secondary" | "inherit";
   children: ReactNode;
 };
 
