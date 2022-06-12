@@ -2,18 +2,25 @@ import { Fab, styled } from "@mui/material";
 import { FC, ReactNode } from "react";
 
 type BottomRightFabProps = {
+  ariaLabel?: string;
+  color?: "primary" | "secondary" | "inherit";
+  onClick?: () => void;
   children: ReactNode;
 };
 
-export const BottomRightFab: FC<BottomRightFabProps> = ({ children }) => {
+export const BottomRightFab: FC<BottomRightFabProps> = (props) => {
   const BottomRightFab = styled(Fab)({
     position: "fixed",
     bottom: "1rem",
     right: "1rem",
   });
   return (
-    <BottomRightFab aria-label="Add" color="primary">
-      {children}
+    <BottomRightFab
+      aria-label={props.ariaLabel}
+      color={props.color}
+      onClick={props.onClick}
+    >
+      {props.children}
     </BottomRightFab>
   );
 };
