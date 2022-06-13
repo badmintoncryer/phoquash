@@ -12,6 +12,8 @@ import { TransitionProps } from "@mui/material/transitions";
 import { forwardRef, ReactElement, Ref, useState } from "react";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { UploadPictureButton } from "../uploadPictureButton/UploadPictureButton";
+import { Image } from "../image/Image";
 
 type TravelRecordCreateDialogProps = {
   open: boolean;
@@ -27,6 +29,23 @@ const Transition = forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+const getBase64 = (
+  file: Blob,
+  callback: {
+    (result: string): void;
+    (arg0: string | ArrayBuffer | null): void;
+  }
+) => {
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = function () {
+    callback(reader.result);
+  };
+  reader.onerror = function (error) {
+    console.log("Error: ", error);
+  };
+};
+
 export const TravelRecordCreateDialog = (
   props: TravelRecordCreateDialogProps
 ) => {
@@ -37,8 +56,23 @@ export const TravelRecordCreateDialog = (
   const [travelFinishDate, setTravelFinishDate] = useState<
     Date | null | undefined
   >();
-  // const [startValue, setStartValue] = useState<Date | undefined>();
-  // const [endValue, setEndValue] = useState<Date | undefined>();
+  const [pictureList, setPictureList] = useState<ReactElement[]>([]);
+
+  const handleChangeFile = (event: { target: { files: any } }) => {
+    let files = event.target.files;
+    for (let i = 0; i < files.length; i++) {
+      // getBase64()は非同期なので、結果を取得したら
+      // Imageコンポーネントを作成して追加していく
+      getBase64(files[i], (result) => {
+        if (!result || typeof result !== "string") {
+          return;
+        }
+        let newPictureList = pictureList;
+        newPictureList.push(<Image name={files[i].name} file={result} />);
+        setPictureList(newPictureList);
+      });
+    }
+  };
 
   return (
     <Dialog
@@ -62,7 +96,6 @@ export const TravelRecordCreateDialog = (
               id="name"
               label="タイトル"
               type="text"
-              // fullWidth
               variant="standard"
               onChange={(event) => setTitleValue(event.target.value)}
             />
@@ -88,6 +121,9 @@ export const TravelRecordCreateDialog = (
                 renderInput={(params) => <TextField {...params} />}
               />
             </LocalizationProvider>
+          </Grid>
+          <Grid item>
+            <UploadPictureButton onChange={handleChangeFile} />
           </Grid>
         </Grid>
       </DialogContent>

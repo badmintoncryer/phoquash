@@ -1,10 +1,10 @@
 import { Box, Container, Grid } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { TravelRecordCard } from "components/uiParts/TravelRecordCard/TravelRecordCard";
+import { TravelRecordCard } from "components/uiParts/travelRecordCard/TravelRecordCard";
 import { useTravelList } from "./hooks/useTravelList";
-import { BottomRightFab } from "components/uiParts/BottomRightFab/BottomRightFab";
+import { BottomRightFab } from "components/uiParts/bottomRightFab/BottomRightFab";
 import { useState } from "react";
-import { TravelRecordCreateDialog } from "components/uiParts/TravelRecordCreateDialog/TravelRecordCreateDialog";
+import { TravelRecordCreateDialog } from "components/uiParts/travelRecordCreateDialog/TravelRecordCreateDialog";
 
 export const Home = () => {
   const { travelList } = useTravelList();
