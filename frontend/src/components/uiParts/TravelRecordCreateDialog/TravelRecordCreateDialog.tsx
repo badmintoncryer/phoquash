@@ -7,13 +7,14 @@ import {
   TextField,
   Button,
   Grid,
+  ImageList,
+  ImageListItem,
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import { forwardRef, ReactElement, Ref, useState } from "react";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { UploadPictureButton } from "../uploadPictureButton/UploadPictureButton";
-import { Image } from "../image/Image";
+import ImageUploading, { ImageType } from "react-images-uploading";
 
 type TravelRecordCreateDialogProps = {
   open: boolean;
@@ -29,21 +30,9 @@ const Transition = forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const getBase64 = (
-  file: Blob,
-  callback: {
-    (result: string): void;
-    (arg0: string | ArrayBuffer | null): void;
-  }
-) => {
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
-  reader.onload = function () {
-    callback(reader.result);
-  };
-  reader.onerror = function (error) {
-    console.log("Error: ", error);
-  };
+export type pictureListType = {
+  name: string;
+  img: string;
 };
 
 export const TravelRecordCreateDialog = (
@@ -56,23 +45,9 @@ export const TravelRecordCreateDialog = (
   const [travelFinishDate, setTravelFinishDate] = useState<
     Date | null | undefined
   >();
-  const [pictureList, setPictureList] = useState<ReactElement[]>([]);
 
-  const handleChangeFile = (event: { target: { files: any } }) => {
-    let files = event.target.files;
-    for (let i = 0; i < files.length; i++) {
-      // getBase64()は非同期なので、結果を取得したら
-      // Imageコンポーネントを作成して追加していく
-      getBase64(files[i], (result) => {
-        if (!result || typeof result !== "string") {
-          return;
-        }
-        let newPictureList = pictureList;
-        newPictureList.push(<Image name={files[i].name} file={result} />);
-        setPictureList(newPictureList);
-      });
-    }
-  };
+  const maxNumber = 100;
+  const [imageList, setImageList] = useState<ImageType[]>([]);
 
   return (
     <Dialog
@@ -123,7 +98,76 @@ export const TravelRecordCreateDialog = (
             </LocalizationProvider>
           </Grid>
           <Grid item>
-            <UploadPictureButton onChange={handleChangeFile} />
+            <ImageUploading
+              multiple
+              value={imageList}
+              onChange={(imageList) => setImageList(imageList)}
+              maxNumber={maxNumber}
+              dataURLKey="data_url"
+            >
+              {({
+                imageList,
+                onImageUpload,
+                onImageRemoveAll,
+                // onImageUpdate,
+                // onImageRemove,
+                isDragging,
+                dragProps,
+              }) => (
+                <div>
+                  <Grid
+                    container
+                    spacing={3}
+                    direction="column"
+                    justifyContent="flex-start"
+                    alignItems="center"
+                  >
+                    <Grid item>
+                      <Button
+                        variant="contained"
+                        component="label"
+                        style={isDragging ? { color: "red" } : undefined}
+                        onClick={onImageUpload}
+                        {...dragProps}
+                      >
+                        アップロード
+                      </Button>
+                    </Grid>
+                    <Grid item>
+                      <Button
+                        variant="contained"
+                        component="label"
+                        color="secondary"
+                        onClick={onImageRemoveAll}
+                      >
+                        画像の消去
+                      </Button>
+                    </Grid>
+                  </Grid>
+
+                  <ImageList
+                    sx={{
+                      width: { xs: 350, sm: 500, md: 500, lg: 500, xl: 500 },
+                    }}
+                    cols={3}
+                    rowHeight={164}
+                  >
+                    {imageList.map((image, index) => (
+                      <div key={index}>
+                        <ImageListItem key={index}>
+                          <img
+                            src={`${image["data_url"]}`}
+                            // srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                            alt=""
+                            loading="lazy"
+                          />
+                        </ImageListItem>
+                      </div>
+                    ))}
+                  </ImageList>
+                </div>
+              )}
+            </ImageUploading>
           </Grid>
         </Grid>
       </DialogContent>
