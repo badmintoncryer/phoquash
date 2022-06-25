@@ -50,10 +50,5 @@ export const getTravelRecord = async (
       start: new Date("2021-12-10"),
       end: new Date("2021-12-15"),
     },
-    {
-      title: "クロアチア",
-      start: new Date("2021-12-10"),
-      end: new Date("2021-12-15"),
-    },
   ];
 };

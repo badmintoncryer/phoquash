@@ -15,6 +15,7 @@ import { forwardRef, ReactElement, Ref, useState } from "react";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import ImageUploading, { ImageType } from "react-images-uploading";
+import exifer from "exifer";
 
 type TravelRecordCreateDialogProps = {
   open: boolean;
@@ -48,6 +49,22 @@ export const TravelRecordCreateDialog = (
 
   const maxNumber = 100;
   const [imageList, setImageList] = useState<ImageType[]>([]);
+
+  const onClickAdd = () => {
+    interface Tags {
+      [index: string]: string;
+    }
+    console.log(typeof imageList[0].file);
+    imageList.forEach((image) => {
+      console.log({ image });
+      let tags: Tags = {};
+      exifer(image.file).then((result: Tags) => {
+        tags = result;
+        console.log({ tags });
+      });
+    });
+    props.onClose();
+  };
 
   return (
     <Dialog
@@ -101,7 +118,9 @@ export const TravelRecordCreateDialog = (
             <ImageUploading
               multiple
               value={imageList}
-              onChange={(imageList) => setImageList(imageList)}
+              onChange={(imageList) => {
+                setImageList(imageList);
+              }}
               maxNumber={maxNumber}
               dataURLKey="data_url"
             >
@@ -160,6 +179,7 @@ export const TravelRecordCreateDialog = (
                             // srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
                             alt=""
                             loading="lazy"
+                            id={image.file?.name || "test"}
                           />
                         </ImageListItem>
                       </div>
@@ -175,7 +195,7 @@ export const TravelRecordCreateDialog = (
         <Button onClick={props.onClose} color="secondary">
           Cancel
         </Button>
-        <Button onClick={props.onClose} color="primary">
+        <Button onClick={onClickAdd} color="primary">
           Add
         </Button>
       </DialogActions>
