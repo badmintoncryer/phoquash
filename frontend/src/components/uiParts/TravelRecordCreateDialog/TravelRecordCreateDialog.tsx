@@ -199,12 +199,11 @@ export const TravelRecordCreateDialog = (
                         image.data_url &&
                         image.file.type === "image/heic"
                       ) {
-                        console.log("heic file is uploaded");
-
                         const heicReader = new FileReader();
                         heicReader.onload = () => {
                           const heicTags = findEXIFinHEIC(heicReader.result);
                           setExifTags((exifTags) => {
+                            // exifTagsに同一ファイル名のオブジェクトが存在するか確認し、その場合には要素の追加を行わない
                             if (
                               exifTags.some(
                                 (element) =>
@@ -214,6 +213,7 @@ export const TravelRecordCreateDialog = (
                             ) {
                               return exifTags;
                             }
+
                             const newTags: TagsListElement = {
                               fileName:
                                 image.file!.name.split(".")[0] + ".JPEG",
@@ -248,7 +248,13 @@ export const TravelRecordCreateDialog = (
                       if (image.file && image.file.type !== "image/heic") {
                         exifer(image.file).then((result: Tags) => {
                           setExifTags((exifTags) => {
-                            if (image.file!.name in exifTags) {
+                            if (
+                              exifTags.some(
+                                (element) =>
+                                  element.fileName ===
+                                  image.file!.name.split(".")[0] + ".JPEG"
+                              )
+                            ) {
                               return exifTags;
                             }
                             const newTags: TagsListElement = {
