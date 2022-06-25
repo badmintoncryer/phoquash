@@ -76,6 +76,7 @@ export type pictureListType = {
 export const TravelRecordCreateDialog = (
   props: TravelRecordCreateDialogProps
 ) => {
+  const [update, setUpdate] = useState<boolean>(false);
   const [titleValue, setTitleValue] = useState("");
   const [travelStartDate, setTravelStartDate] = useState<
     Date | null | undefined
@@ -171,78 +172,96 @@ export const TravelRecordCreateDialog = (
     console.log({ exifTags });
     props.onClose();
   }, [exifTags, imageList, props]);
+  interface addHeicExifProps {
+    image: ImageType;
+  }
+  const addHeicExif = useCallback((props: addHeicExifProps) => {
+    const heicReader = new FileReader();
+    heicReader.onload = () => {
+      const heicTags = findEXIFinHEIC(heicReader.result);
+      setExifTags((exifTags) => {
+        // exifTagsに同一ファイル名のオブジェクトが存在するか確認し、その場合には要素の追加を行わない
+        if (
+          exifTags.some(
+            (element) =>
+              element.fileName ===
+              props.image.file!.name.split(".")[0] + ".JPEG"
+          )
+        ) {
+          return exifTags;
+        }
 
-  const onChange = useCallback((imageList: ImageType[]) => {
-    imageList.forEach((image) => {
-      if (image.file && image.data_url && image.file.type === "image/heic") {
-        const heicReader = new FileReader();
-        heicReader.onload = () => {
-          const heicTags = findEXIFinHEIC(heicReader.result);
-          setExifTags((exifTags) => {
-            // exifTagsに同一ファイル名のオブジェクトが存在するか確認し、その場合には要素の追加を行わない
-            if (
-              exifTags.some(
-                (element) =>
-                  element.fileName === image.file!.name.split(".")[0] + ".JPEG"
-              )
-            ) {
-              return exifTags;
-            }
-
-            const newTags: TagsListElement = {
-              fileName: image.file!.name.split(".")[0] + ".JPEG",
-              tags: heicTags,
-            };
-            console.log([...exifTags, newTags]);
-            return [...exifTags, newTags];
-          });
+        const newTags: TagsListElement = {
+          fileName: props.image.file!.name.split(".")[0] + ".JPEG",
+          tags: heicTags,
         };
-        heicReader.readAsArrayBuffer(image.file);
-
-        heic2any({
-          blob: dataUriToBlob(image.data_url),
-          toType: "image/jpeg",
-        }).then((conversionResult) => {
-          const dataUrlReader = new FileReader();
-          dataUrlReader.onload = (event) => {
-            image.data_url = event.target!.result;
-            image.file = new File(
-              [conversionResult],
-              image.file!.name.split(".")[0] + ".JPEG",
-              {
-                lastModified: 0,
-                type: "image/jpeg",
-              }
-            );
-            console.log({ imageList });
-            setImageList(imageList);
-          };
-          dataUrlReader.readAsDataURL(conversionResult);
-        });
-      }
-      // exif形式以外の画像の処理
-      else if (image.file && image.file.type !== "image/heic") {
-        exifer(image.file).then((result: Tags) => {
-          setExifTags((exifTags) => {
-            if (
-              exifTags.some(
-                (element) =>
-                  element.fileName === image.file!.name.split(".")[0] + ".JPEG"
-              )
-            ) {
-              return exifTags;
-            }
-            const newTags: TagsListElement = {
-              fileName: image.file!.name,
-              tags: result,
-            };
-            return [...exifTags, newTags];
-          });
-        });
-      }
-    });
-    setImageList(imageList);
+        console.log([...exifTags, newTags]);
+        return [...exifTags, newTags];
+      });
+    };
+    heicReader.readAsArrayBuffer(props.image.file!);
   }, []);
+
+  interface AddExifProps {
+    image: ImageType;
+  }
+  const addExif = useCallback((props: AddExifProps) => {
+    exifer(props.image.file).then((result: Tags) => {
+      setExifTags((exifTags) => {
+        if (
+          exifTags.some(
+            (element) =>
+              element.fileName ===
+              props.image.file!.name.split(".")[0] + ".JPEG"
+          )
+        ) {
+          return exifTags;
+        }
+        const newTags: TagsListElement = {
+          fileName: props.image.file!.name,
+          tags: result,
+        };
+        return [...exifTags, newTags];
+      });
+    });
+  }, []);
+
+  const onChange = useCallback(
+    (imageList: ImageType[]) => {
+      imageList.forEach((image) => {
+        if (image.file && image.data_url && image.file.type === "image/heic") {
+          addHeicExif({ image: image });
+          // heicをjpegに変換し、imageListに登録する
+          heic2any({
+            blob: dataUriToBlob(image.data_url),
+            toType: "image/jpeg",
+          }).then((conversionResult) => {
+            const dataUrlReader = new FileReader();
+            dataUrlReader.onload = (event) => {
+              image.data_url = event.target!.result;
+              image.file = new File(
+                [conversionResult],
+                image.file!.name.split(".")[0] + ".JPEG",
+                {
+                  lastModified: 0,
+                  type: "image/jpeg",
+                }
+              );
+              setImageList(imageList);
+              setUpdate(!update);
+            };
+            dataUrlReader.readAsDataURL(conversionResult);
+          });
+        }
+        // exif形式以外の画像の処理
+        else if (image.file && image.file.type !== "image/heic") {
+          addExif({ image: image });
+        }
+      });
+      setImageList(imageList);
+    },
+    [addExif, addHeicExif, update]
+  );
 
   return (
     <Dialog
@@ -336,7 +355,7 @@ export const TravelRecordCreateDialog = (
                         color="secondary"
                         onClick={onImageRemoveAll}
                       >
-                        画像の消去
+                        画像の消去 (合計{imageList.length}枚)
                       </Button>
                     </Grid>
                   </Grid>
