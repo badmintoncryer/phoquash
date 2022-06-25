@@ -248,7 +248,9 @@ export const TravelRecordCreateDialog = (
                 }
               );
               setImageList(imageList);
-              setUpdate(!update);
+              setTimeout(() => {
+                setUpdate(!update);
+              }, 500);
             };
             dataUrlReader.readAsDataURL(conversionResult);
           });
@@ -259,6 +261,7 @@ export const TravelRecordCreateDialog = (
         }
       });
       setImageList(imageList);
+      // setUpdate(!update);
     },
     [addExif, addHeicExif, update]
   );
