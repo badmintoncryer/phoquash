@@ -88,84 +88,6 @@ export const TravelRecordCreateDialog = (
   const maxNumber = 100;
   const [imageList, setImageList] = useState<ImageType[]>([]);
   const [exifTags, setExifTags] = useState<TagsListElement[]>([]);
-  // interface IsProcessing {
-  //   fileName: string;
-  //   isProcessing: boolean;
-  // }
-  // 画像ローディング(exif取得)の状態管理のため、一枚ごとのboolean配列を生成
-  // const [isLoading, setIsLoading] = useState<IsProcessing[]>([]);
-  // // 画像の変換状態管理のため、一枚ごとのboolean配列を生成
-  // const [isConverting, setIsConverting] = useState<IsProcessing[]>([]);
-  // interface updateIsProcessing {
-  //   index: number;
-  //   fileName: string;
-  // }
-  // const startLoading = (props: updateIsProcessing) => {
-  //   // すでに同一ファイル名が存在した場合
-  //   if (isLoading.some((element) => element.fileName === props.fileName)) {
-  //     setIsLoading(
-  //       isLoading.map((element) =>
-  //         element.fileName === props.fileName
-  //           ? { fileName: props.fileName, isProcessing: true }
-  //           : element
-  //       )
-  //     );
-  //     return;
-  //   }
-  //   // 対応するindexのみtrue(読込中)にする
-  //   const newIsLoading: IsProcessing = {
-  //     fileName: props.fileName,
-  //     isProcessing: true,
-  //   };
-  //   setIsLoading([...isLoading, newIsLoading]);
-  // };
-  // const finishLoading = (props: updateIsProcessing) => {
-  //   // すでに同一ファイル名が存在した場合
-  //   if (!isLoading.some((element) => element.fileName === props.fileName)) {
-  //     throw new Error("fileName is not exists in isLoading");
-  //   }
-  //   // 対応するindexのみfalse(読込完了)にする
-  //   setIsLoading(
-  //     isLoading.map((element) =>
-  //       element.fileName === props.fileName
-  //         ? { fileName: props.fileName, isProcessing: false }
-  //         : element
-  //     )
-  //   );
-  // };
-  // const startConverting = (props: updateIsProcessing) => {
-  //   console.log({ isConverting });
-  //   // すでに同一ファイル名が存在した場合
-  //   if (isConverting.some((element) => element.fileName === props.fileName)) {
-  //     // setIsConverting(
-  //     //   isLoading.map((element) =>
-  //     //     element.fileName === props.fileName
-  //     //       ? { fileName: props.fileName, isProcessing: true }
-  //     //       : element
-  //     //   )
-  //     // );
-  //     return;
-  //   }
-  //   // 対応するindexのみtrue(読込中)にする
-  //   const newIsConverting: IsProcessing = {
-  //     fileName: props.fileName,
-  //     isProcessing: true,
-  //   };
-  //   setIsConverting([...isConverting, newIsConverting]);
-  // };
-  // const finishConverting = (props: updateIsProcessing) => {
-  //   if (!isConverting.some((element) => element.fileName === props.fileName)) {
-  //     throw new Error("fileName is not exists in isConverting");
-  //   }
-  //   // 対応するindexのみfalse(変換完了)にする
-  //   setIsConverting(
-  //     isConverting.map((element) =>
-  //       element.fileName === props.fileName
-  //         ? { fileName: props.fileName, isProcessing: false }
-  //         : element
-  //     )
-  //   );
-  // };
 
   const onClickAdd = useCallback(() => {
     console.log({ imageList });
@@ -335,7 +257,7 @@ export const TravelRecordCreateDialog = (
                 <div>
                   <Grid
                     container
-                    spacing={3}
+                    spacing={1}
                     direction="column"
                     justifyContent="flex-start"
                     alignItems="center"
@@ -347,6 +269,7 @@ export const TravelRecordCreateDialog = (
                         style={isDragging ? { color: "red" } : undefined}
                         onClick={onImageUpload}
                         {...dragProps}
+                        sx={{ width: 180 }}
                       >
                         アップロード
                       </Button>
@@ -357,6 +280,7 @@ export const TravelRecordCreateDialog = (
                         component="label"
                         color="secondary"
                         onClick={onImageRemoveAll}
+                        sx={{ width: 180 }}
                       >
                         画像の消去 (合計{imageList.length}枚)
                       </Button>
