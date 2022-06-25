@@ -52,3 +52,5 @@ export const getTravelRecord = async (
     },
   ];
 };
+
+export const postTravelRecord = () => {};
