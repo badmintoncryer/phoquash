@@ -11,12 +11,13 @@ import {
   ImageListItem,
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
-import { forwardRef, ReactElement, Ref, useState } from "react";
+import { forwardRef, ReactElement, Ref, useEffect, useState } from "react";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import ImageUploading, { ImageType } from "react-images-uploading";
 import exifer from "exifer";
 import heic2any from "heic2any";
+import { findEXIFinHEIC } from "exif-heic-js/exif-heic";
 
 type TravelRecordCreateDialogProps = {
   open: boolean;
@@ -51,6 +52,15 @@ const dataUriToBlob = (dataUri: string): Blob => {
   return blob;
 };
 
+interface Tags {
+  [index: string]: string;
+}
+
+interface TagsListElement {
+  fileName: string;
+  tags: Tags;
+}
+
 export type pictureListType = {
   name: string;
   img: string;
@@ -69,20 +79,11 @@ export const TravelRecordCreateDialog = (
 
   const maxNumber = 100;
   const [imageList, setImageList] = useState<ImageType[]>([]);
+  const [exifTags, setExifTags] = useState<TagsListElement[]>([]);
 
   const onClickAdd = () => {
-    interface Tags {
-      [index: string]: string;
-    }
     console.log({ imageList });
-    console.log(typeof imageList[0].file);
-    imageList.forEach((image) => {
-      let tags: Tags = {};
-      exifer(image.file).then((result: Tags) => {
-        tags = result;
-        console.log({ tags });
-      });
-    });
+    console.log({ exifTags });
     props.onClose();
   };
 
@@ -198,13 +199,38 @@ export const TravelRecordCreateDialog = (
                         image.data_url &&
                         image.file.type === "image/heic"
                       ) {
-                        console.log("heicheic");
+                        console.log("heic file is uploaded");
+
+                        const heicReader = new FileReader();
+                        heicReader.onload = () => {
+                          const heicTags = findEXIFinHEIC(heicReader.result);
+                          setExifTags((exifTags) => {
+                            if (
+                              exifTags.some(
+                                (element) =>
+                                  element.fileName ===
+                                  image.file!.name.split(".")[0] + ".JPEG"
+                              )
+                            ) {
+                              return exifTags;
+                            }
+                            const newTags: TagsListElement = {
+                              fileName:
+                                image.file!.name.split(".")[0] + ".JPEG",
+                              tags: heicTags,
+                            };
+                            console.log([...exifTags, newTags]);
+                            return [...exifTags, newTags];
+                          });
+                        };
+                        heicReader.readAsArrayBuffer(image.file);
+
                         heic2any({
                           blob: dataUriToBlob(image.data_url),
                           toType: "image/jpeg",
                         }).then((conversionResult) => {
-                          const reader = new FileReader();
-                          reader.onload = (event) => {
+                          const dataUrlReader = new FileReader();
+                          dataUrlReader.onload = (event) => {
                             image.data_url = event.target!.result;
                             image.file = new File(
                               [conversionResult],
@@ -214,13 +240,24 @@ export const TravelRecordCreateDialog = (
                                 type: "image/jpeg",
                               }
                             );
-                            console.log({ image });
                           };
-                          reader.readAsDataURL(conversionResult);
+                          dataUrlReader.readAsDataURL(conversionResult);
                         });
-                      } else {
-                        console.log({ image });
-                        console.log("not heic");
+                      }
+                      // exif形式以外の画像の処理
+                      if (image.file && image.file.type !== "image/heic") {
+                        exifer(image.file).then((result: Tags) => {
+                          setExifTags((exifTags) => {
+                            if (image.file!.name in exifTags) {
+                              return exifTags;
+                            }
+                            const newTags: TagsListElement = {
+                              fileName: image.file!.name,
+                              tags: result,
+                            };
+                            return [...exifTags, newTags];
+                          });
+                        });
                       }
                       return (
                         <div key={index}>
