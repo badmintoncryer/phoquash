@@ -11,7 +11,14 @@ import {
   ImageListItem,
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
-import { forwardRef, ReactElement, Ref, useEffect, useState } from "react";
+import {
+  forwardRef,
+  ReactElement,
+  Ref,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import ImageUploading, { ImageType } from "react-images-uploading";
@@ -80,12 +87,162 @@ export const TravelRecordCreateDialog = (
   const maxNumber = 100;
   const [imageList, setImageList] = useState<ImageType[]>([]);
   const [exifTags, setExifTags] = useState<TagsListElement[]>([]);
+  // interface IsProcessing {
+  //   fileName: string;
+  //   isProcessing: boolean;
+  // }
+  // 画像ローディング(exif取得)の状態管理のため、一枚ごとのboolean配列を生成
+  // const [isLoading, setIsLoading] = useState<IsProcessing[]>([]);
+  // // 画像の変換状態管理のため、一枚ごとのboolean配列を生成
+  // const [isConverting, setIsConverting] = useState<IsProcessing[]>([]);
+  // interface updateIsProcessing {
+  //   index: number;
+  //   fileName: string;
+  // }
+  // const startLoading = (props: updateIsProcessing) => {
+  //   // すでに同一ファイル名が存在した場合
+  //   if (isLoading.some((element) => element.fileName === props.fileName)) {
+  //     setIsLoading(
+  //       isLoading.map((element) =>
+  //         element.fileName === props.fileName
+  //           ? { fileName: props.fileName, isProcessing: true }
+  //           : element
+  //       )
+  //     );
+  //     return;
+  //   }
+  //   // 対応するindexのみtrue(読込中)にする
+  //   const newIsLoading: IsProcessing = {
+  //     fileName: props.fileName,
+  //     isProcessing: true,
+  //   };
+  //   setIsLoading([...isLoading, newIsLoading]);
+  // };
+  // const finishLoading = (props: updateIsProcessing) => {
+  //   // すでに同一ファイル名が存在した場合
+  //   if (!isLoading.some((element) => element.fileName === props.fileName)) {
+  //     throw new Error("fileName is not exists in isLoading");
+  //   }
+  //   // 対応するindexのみfalse(読込完了)にする
+  //   setIsLoading(
+  //     isLoading.map((element) =>
+  //       element.fileName === props.fileName
+  //         ? { fileName: props.fileName, isProcessing: false }
+  //         : element
+  //     )
+  //   );
+  // };
+  // const startConverting = (props: updateIsProcessing) => {
+  //   console.log({ isConverting });
+  //   // すでに同一ファイル名が存在した場合
+  //   if (isConverting.some((element) => element.fileName === props.fileName)) {
+  //     // setIsConverting(
+  //     //   isLoading.map((element) =>
+  //     //     element.fileName === props.fileName
+  //     //       ? { fileName: props.fileName, isProcessing: true }
+  //     //       : element
+  //     //   )
+  //     // );
+  //     return;
+  //   }
+  //   // 対応するindexのみtrue(読込中)にする
+  //   const newIsConverting: IsProcessing = {
+  //     fileName: props.fileName,
+  //     isProcessing: true,
+  //   };
+  //   setIsConverting([...isConverting, newIsConverting]);
+  // };
+  // const finishConverting = (props: updateIsProcessing) => {
+  //   if (!isConverting.some((element) => element.fileName === props.fileName)) {
+  //     throw new Error("fileName is not exists in isConverting");
+  //   }
+  //   // 対応するindexのみfalse(変換完了)にする
+  //   setIsConverting(
+  //     isConverting.map((element) =>
+  //       element.fileName === props.fileName
+  //         ? { fileName: props.fileName, isProcessing: false }
+  //         : element
+  //     )
+  //   );
+  // };
 
-  const onClickAdd = () => {
+  const onClickAdd = useCallback(() => {
     console.log({ imageList });
     console.log({ exifTags });
     props.onClose();
-  };
+  }, [exifTags, imageList, props]);
+
+  const onChange = useCallback((imageList: ImageType[]) => {
+    imageList.forEach((image) => {
+      if (image.file && image.data_url && image.file.type === "image/heic") {
+        const heicReader = new FileReader();
+        heicReader.onload = () => {
+          const heicTags = findEXIFinHEIC(heicReader.result);
+          setExifTags((exifTags) => {
+            // exifTagsに同一ファイル名のオブジェクトが存在するか確認し、その場合には要素の追加を行わない
+            if (
+              exifTags.some(
+                (element) =>
+                  element.fileName === image.file!.name.split(".")[0] + ".JPEG"
+              )
+            ) {
+              return exifTags;
+            }
+
+            const newTags: TagsListElement = {
+              fileName: image.file!.name.split(".")[0] + ".JPEG",
+              tags: heicTags,
+            };
+            console.log([...exifTags, newTags]);
+            return [...exifTags, newTags];
+          });
+        };
+        heicReader.readAsArrayBuffer(image.file);
+
+        heic2any({
+          blob: dataUriToBlob(image.data_url),
+          toType: "image/jpeg",
+        }).then((conversionResult) => {
+          const dataUrlReader = new FileReader();
+          dataUrlReader.onload = (event) => {
+            image.data_url = event.target!.result;
+            image.file = new File(
+              [conversionResult],
+              image.file!.name.split(".")[0] + ".JPEG",
+              {
+                lastModified: 0,
+                type: "image/jpeg",
+              }
+            );
+            console.log({ imageList });
+            setImageList(imageList);
+          };
+          dataUrlReader.readAsDataURL(conversionResult);
+        });
+      }
+      // exif形式以外の画像の処理
+      else if (image.file && image.file.type !== "image/heic") {
+        exifer(image.file).then((result: Tags) => {
+          setExifTags((exifTags) => {
+            if (
+              exifTags.some(
+                (element) =>
+                  element.fileName === image.file!.name.split(".")[0] + ".JPEG"
+              )
+            ) {
+              return exifTags;
+            }
+            const newTags: TagsListElement = {
+              fileName: image.file!.name,
+              tags: result,
+            };
+            return [...exifTags, newTags];
+          });
+        });
+      }
+    });
+    setImageList(imageList);
+  }, []);
 
   return (
     <Dialog
@@ -139,9 +296,7 @@ export const TravelRecordCreateDialog = (
             <ImageUploading
               multiple
               value={imageList}
-              onChange={(imageList) => {
-                setImageList(imageList);
-              }}
+              onChange={onChange}
               maxNumber={maxNumber}
               dataURLKey="data_url"
               acceptType={["jpg", "gif", "png", "heic"]}
@@ -185,7 +340,6 @@ export const TravelRecordCreateDialog = (
                       </Button>
                     </Grid>
                   </Grid>
-
                   <ImageList
                     sx={{
                       width: { xs: 350, sm: 500, md: 500, lg: 500, xl: 500 },
@@ -194,77 +348,6 @@ export const TravelRecordCreateDialog = (
                     rowHeight={164}
                   >
                     {imageList.map((image, index) => {
-                      if (
-                        image.file &&
-                        image.data_url &&
-                        image.file.type === "image/heic"
-                      ) {
-                        const heicReader = new FileReader();
-                        heicReader.onload = () => {
-                          const heicTags = findEXIFinHEIC(heicReader.result);
-                          setExifTags((exifTags) => {
-                            // exifTagsに同一ファイル名のオブジェクトが存在するか確認し、その場合には要素の追加を行わない
-                            if (
-                              exifTags.some(
-                                (element) =>
-                                  element.fileName ===
-                                  image.file!.name.split(".")[0] + ".JPEG"
-                              )
-                            ) {
-                              return exifTags;
-                            }
-
-                            const newTags: TagsListElement = {
-                              fileName:
-                                image.file!.name.split(".")[0] + ".JPEG",
-                              tags: heicTags,
-                            };
-                            console.log([...exifTags, newTags]);
-                            return [...exifTags, newTags];
-                          });
-                        };
-                        heicReader.readAsArrayBuffer(image.file);
-
-                        heic2any({
-                          blob: dataUriToBlob(image.data_url),
-                          toType: "image/jpeg",
-                        }).then((conversionResult) => {
-                          const dataUrlReader = new FileReader();
-                          dataUrlReader.onload = (event) => {
-                            image.data_url = event.target!.result;
-                            image.file = new File(
-                              [conversionResult],
-                              image.file!.name.split(".")[0] + ".JPEG",
-                              {
-                                lastModified: 0,
-                                type: "image/jpeg",
-                              }
-                            );
-                          };
-                          dataUrlReader.readAsDataURL(conversionResult);
-                        });
-                      }
-                      // exif形式以外の画像の処理
-                      if (image.file && image.file.type !== "image/heic") {
-                        exifer(image.file).then((result: Tags) => {
-                          setExifTags((exifTags) => {
-                            if (
-                              exifTags.some(
-                                (element) =>
-                                  element.fileName ===
-                                  image.file!.name.split(".")[0] + ".JPEG"
-                              )
-                            ) {
-                              return exifTags;
-                            }
-                            const newTags: TagsListElement = {
-                              fileName: image.file!.name,
-                              tags: result,
-                            };
-                            return [...exifTags, newTags];
-                          });
-                        });
-                      }
                       return (
                         <div key={index}>
                           <ImageListItem key={index}>
