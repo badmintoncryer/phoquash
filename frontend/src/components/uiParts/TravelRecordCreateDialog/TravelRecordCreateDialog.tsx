@@ -16,6 +16,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import ImageUploading, { ImageType } from "react-images-uploading";
 import exifer from "exifer";
+import heic2any from "heic2any";
 
 type TravelRecordCreateDialogProps = {
   open: boolean;
@@ -30,6 +31,25 @@ const Transition = forwardRef(function Transition(
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
+
+const dataUriToBlob = (dataUri: string): Blob => {
+  const byteString = atob(dataUri.split(",")[1]);
+  const mimeString = dataUri.split(",")[0].split(":")[1].split(";")[0];
+  // write the bytes of the string to an ArrayBuffer
+  const arrayBuffer = new ArrayBuffer(byteString.length);
+
+  // create a view into the buffer
+  const UnsignedIntArray = new Uint8Array(arrayBuffer);
+
+  // set the bytes of the buffer to the correct values
+  for (var i = 0; i < byteString.length; i++) {
+    UnsignedIntArray[i] = byteString.charCodeAt(i);
+  }
+
+  // write the ArrayBuffer to a blob, and you're done
+  const blob = new Blob([arrayBuffer], { type: mimeString });
+  return blob;
+};
 
 export type pictureListType = {
   name: string;
@@ -54,9 +74,9 @@ export const TravelRecordCreateDialog = (
     interface Tags {
       [index: string]: string;
     }
+    console.log({ imageList });
     console.log(typeof imageList[0].file);
     imageList.forEach((image) => {
-      console.log({ image });
       let tags: Tags = {};
       exifer(image.file).then((result: Tags) => {
         tags = result;
@@ -123,6 +143,7 @@ export const TravelRecordCreateDialog = (
               }}
               maxNumber={maxNumber}
               dataURLKey="data_url"
+              acceptType={["jpg", "gif", "png", "heic"]}
             >
               {({
                 imageList,
@@ -171,19 +192,49 @@ export const TravelRecordCreateDialog = (
                     cols={3}
                     rowHeight={164}
                   >
-                    {imageList.map((image, index) => (
-                      <div key={index}>
-                        <ImageListItem key={index}>
-                          <img
-                            src={`${image["data_url"]}`}
-                            // srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                            alt=""
-                            loading="lazy"
-                            id={image.file?.name || "test"}
-                          />
-                        </ImageListItem>
-                      </div>
-                    ))}
+                    {imageList.map((image, index) => {
+                      if (
+                        image.file &&
+                        image.data_url &&
+                        image.file.type === "image/heic"
+                      ) {
+                        console.log("heicheic");
+                        heic2any({
+                          blob: dataUriToBlob(image.data_url),
+                          toType: "image/jpeg",
+                        }).then((conversionResult) => {
+                          const reader = new FileReader();
+                          reader.onload = (event) => {
+                            image.data_url = event.target!.result;
+                            image.file = new File(
+                              [conversionResult],
+                              image.file!.name.split(".")[0] + ".JPEG",
+                              {
+                                lastModified: 0,
+                                type: "image/jpeg",
+                              }
+                            );
+                            console.log({ image });
+                          };
+                          reader.readAsDataURL(conversionResult);
+                        });
+                      } else {
+                        console.log({ image });
+                        console.log("not heic");
+                      }
+                      return (
+                        <div key={index}>
+                          <ImageListItem key={index}>
+                            <img
+                              src={`${image["data_url"]}`}
+                              alt=""
+                              loading="lazy"
+                              id={image.file?.name || "test"}
+                            />
+                          </ImageListItem>
+                        </div>
+                      );
+                    })}
                   </ImageList>
                 </div>
               )}
