@@ -21,6 +21,5 @@ export class CdkStack extends Stack {
 
     const lambda = new Lambda(efs.accessPoint, vpc.vpc)
     lambda.createResources(this)
-
   }
 }
