@@ -5,6 +5,7 @@ import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as path from "path";
 
 export class Lambda {
+  public createDb: lambda.Function;
   public postTravelRecordLambda: lambda.Function;
   public nodeLayer: lambda.LayerVersion;
   private readonly accessPoint: efs.AccessPoint;
@@ -22,6 +23,24 @@ export class Lambda {
       description: "node layer",
       layerVersionName: "node-layer",
     });
+
+    this.createDb = new lambda.Function(
+      scope,
+      "createDb",
+      {
+        filesystem: lambda.FileSystem.fromEfsAccessPoint(
+          this.accessPoint,
+          "/mnt/db"
+        ),
+        layers: [this.nodeLayer],
+        runtime: lambda.Runtime.NODEJS_16_X,
+        handler: "index.handler",
+        code: lambda.Code.fromAsset(
+          path.join(__dirname, "../lambda/function/createDb")
+        ),
+        vpc: this.vpc,
+      }
+    )
 
     this.postTravelRecordLambda = new lambda.Function(
       scope,
