@@ -1,0 +1,44 @@
+[tool.commitizen]
+name = "cz_customize"
+
+[tool.commitizen.customize]
+bump_map = {"break" = "MAJOR", "new" = "MINOR", "fix" = "PATCH", "hotfix" = "PATCH"}
+bump_pattern = "^(break|new|fix|hotfix)"
+change_type_map = {"feature" = "Feat", "bug fix" = "Fix"}
+change_type_order = ["BREAKING CHANGE", "feat", "fix", "refactor", "perf"]
+changelog_pattern = "^(feature|bug fix)?(!)?"
+commit_parser = "^(?P<change_type>feature|bug fix):\\s(?P<message>.*)?"
+example = "feature: this feature enable customize through config file"
+info = """
+This is customized info
+"""
+info_path = "cz_customize_info.txt"
+message_template = "{{change_type}}:{% if show_message %} {{message}}{% endif %}"
+schema = "<type>: <body>"
+schema_pattern = "(feature|bug fix):(\\s.*)"
+
+[[tool.commitizen.customize.questions]]
+choices = [
+  {value = "🌟 feat", name = "feat: 機能追加", emoji = "🌟"},
+  {value = "🔧 fix", name = "fix: バグの修正", emoji = "🔧"},
+  {value = "🗒 docs", name = "docs: ドキュメントのみの変更", emoji = "🗒"},
+  {value = "🎨 style", name = "style: コードの動作に影響しない、見た目だけの変更（スペース、フォーマット、欠落の修正、セミコロンなど)", emoji = "🎨"},
+  {value = "♻️ refactor", name = "refactor: バグの修正や機能の追加ではないコードの変更", emoji = "♻️"},
+  {value = "⏫ perf", name = "perf: パフォーマンスを向上させるコードの変更", emoji = "⏫"},
+  {value = "🧪 test", name = "test: 不足しているテストの追加や既存のテストの修正", emoji = "🧪"},
+  {value = "🐧 chore", name = "chore: ビルドプロセスやドキュメント生成などの補助ツールやライブラリの変更", emoji = "🐧"},
+]
+name = "change_type"
+type = "list"
+# choices = ["feature", "fix"]  # short version
+message = "コミットするタイプを選択してください"
+
+[[tool.commitizen.customize.questions]]
+message = "コミット内容について入力してください:"
+name = "message"
+type = "input"
+
+[[tool.commitizen.customize.questions]]
+message = "Do you want to add body message in commit?"
+name = "show_message"
+type = "confirm"
