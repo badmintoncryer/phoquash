@@ -23,11 +23,11 @@ if (
 }
 
 export class Cognito {
-  public userpool: cognito.UserPool;
+  public userPool: cognito.UserPool;
   public domain: cognito.UserPoolDomain;
   public clientWriteAttributes: cognito.ClientAttributes;
   public clientReadAttributes: cognito.ClientAttributes;
-  public client: cognito.UserPoolClient;
+  public userPoolClient: cognito.UserPoolClient;
   public clientId: string;
   public facebookProvider: cognito.UserPoolIdentityProviderFacebook;
   public googleProvider: cognito.UserPoolIdentityProviderGoogle;
@@ -37,7 +37,7 @@ export class Cognito {
 
   public createResources(scope: Construct) {
     // ユーザープールの定義
-    this.userpool = new cognito.UserPool(scope, "UserPool", {
+    this.userPool = new cognito.UserPool(scope, "UserPool", {
       userPoolName: "phoquash-userpool",
       selfSignUpEnabled: true,
       userVerification: {
@@ -47,7 +47,7 @@ export class Cognito {
         emailStyle: cognito.VerificationEmailStyle.CODE,
       },
     });
-    this.domain = this.userpool.addDomain("CognitoDomain", {
+    this.domain = this.userPool.addDomain("CognitoDomain", {
       cognitoDomain: {
         domainPrefix: "phoquash",
       },
@@ -64,7 +64,7 @@ export class Cognito {
         emailVerified: true,
       });
 
-    this.client = this.userpool.addClient("phoquash-app-client", {
+    this.userPoolClient = this.userPool.addClient("phoquash-app-client", {
       oAuth: {
         flows: {
           authorizationCodeGrant: true,
@@ -80,7 +80,7 @@ export class Cognito {
       readAttributes: this.clientReadAttributes,
       writeAttributes: this.clientWriteAttributes,
     });
-    this.clientId = this.client.userPoolClientId;
+    this.clientId = this.userPoolClient.userPoolClientId;
 
     this.facebookProvider = new cognito.UserPoolIdentityProviderFacebook(
       scope,
@@ -88,7 +88,7 @@ export class Cognito {
       {
         clientId: facebookClientId,
         clientSecret: facebookClientSecret,
-        userPool: this.userpool,
+        userPool: this.userPool,
         apiVersion: "v12.0",
         attributeMapping: {
           email: cognito.ProviderAttribute.FACEBOOK_EMAIL,
@@ -98,7 +98,7 @@ export class Cognito {
       }
     );
     // appClientとproviderを同一stackで構築する場合、依存関係を設定する必要がある
-    this.client.node.addDependency(this.facebookProvider);
+    this.userPoolClient.node.addDependency(this.facebookProvider);
 
     this.googleProvider = new cognito.UserPoolIdentityProviderGoogle(
       scope,
@@ -106,7 +106,7 @@ export class Cognito {
       {
         clientId: googleClientId,
         clientSecret: googleClientSecret,
-        userPool: this.userpool,
+        userPool: this.userPool,
         scopes: ["email", "profile"],
 
         attributeMapping: {
@@ -115,9 +115,9 @@ export class Cognito {
         },
       }
     );
-    this.client.node.addDependency(this.googleProvider);
+    this.userPoolClient.node.addDependency(this.googleProvider);
 
-    this.signInUrl = this.domain.signInUrl(this.client, {
+    this.signInUrl = this.domain.signInUrl(this.userPoolClient, {
       redirectUri: applicationUrl, // must be a URL configured under 'callbackUrls' with the client
     });
 

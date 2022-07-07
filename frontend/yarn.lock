@@ -230,6 +230,11 @@
   dependencies:
     "@aws-amplify/core" "4.5.6"
 
+"@aws-cdk/aws-apigatewayv2-alpha@^2.31.0-alpha.0":
+  version "2.31.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-apigatewayv2-alpha/-/aws-apigatewayv2-alpha-2.31.0-alpha.0.tgz#fd7e5f89049d6422c479b201ade38519428f5e4e"
+  integrity sha512-lL1knyXVmbV66RhwCLtPm6skWO2dsX8qV+35WHEKGkiFRUttXtr6PVYPbEr1Q4hTrDDvTbKrVzHbGrZkVSRFyw==
+
 "@aws-crypto/crc32@^1.0.0":
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@aws-crypto/crc32/-/crc32-1.2.2.tgz#4a758a596fa8cb3ab463f037a78c2ca4992fe81f"

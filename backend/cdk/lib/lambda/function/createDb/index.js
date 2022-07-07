@@ -15,6 +15,7 @@ exports.handler = async (event, context) => {
       db.run(
         "CREATE TABLE if not exists user( \
           id integer primary key autoincrement \
+          userName test \
         )",
         (error) => {
           if (error) {
@@ -24,11 +25,11 @@ exports.handler = async (event, context) => {
       );
       db.run(
         "CREATE TABLE if not exists travelRecord( \
-          travel_id integer primary key autoincrement \
+          travelId integer primary key autoincrement \
           title text \
           start numeric \
           end numeric \
-          foreign key (user_id) references user(id) \
+          foreign key (userId) references user(id) \
         )",
         (error) => {
           if (error) {
@@ -38,8 +39,8 @@ exports.handler = async (event, context) => {
       );
       db.run(
         "CREATE TABLE if not exists travel( \
-          foreign key (user_id) references user(id) \
-          foreign key (travel_id) references travelRecord(travel_id) \
+          foreign key (userId) references user(id) \
+          foreign key (travelId) references travelRecord(travelId) \
         )",
         (error) => {
           if (error) {
@@ -49,9 +50,9 @@ exports.handler = async (event, context) => {
       );
       db.run(
         "CREATE TABLE if not exists photo( \
-          photo_id integer primary key autoincrement \
+          photoId integer primary key autoincrement \
           description text \
-          foreign key (travel_id) references travelRecord(travel_id) \
+          foreign key (travelId) references travelRecord(travelId) \
           fileName text \
           filePath text \
           isFavorite integer \

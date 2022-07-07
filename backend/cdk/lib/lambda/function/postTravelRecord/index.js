@@ -7,13 +7,8 @@ exports.handler = async (event, context) => {
       return;
     }
     db.serialize(() => {
-      //table生成（無ければ）
       db.run(
-        "create table if not exists likes( \
-                id integer primary key autoincrement, \
-                contentId nvwchar(255), \
-                name nverchar(64) \
-            )",
+        "INSERT INTO travelRecord(title,start,end,) values(?,?)", "foo", 44",
         (error) => {
           if (error) {
             console.error("table error: " + error.message);
