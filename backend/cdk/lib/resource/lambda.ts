@@ -45,7 +45,7 @@ export class Lambda {
 
     this.postUser = new lambda.Function(
       scope,
-      "postUSer",
+      "postUser",
       {
         filesystem: lambda.FileSystem.fromEfsAccessPoint(
           this.accessPoint,
