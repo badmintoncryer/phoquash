@@ -37,11 +37,16 @@ const postUser = (userName) => {
 };
 
 exports.handler = async (event) => {
-  console.log({ event });
   const decodedEventBody = Buffer.from(event.body, "base64").toString();
-  console.log({ decodedEventBody });
-  const eventBody = JSON.parse(decodedEventBody);
-  const userName = eventBody.userName;
+  const bodyList = decodedEventBody.split("&").map((keyValue) => {
+    const key = keyValue.split("=")[0];
+    const value = keyValue.split("=")[1];
+    return { key: key, value: value };
+  });
+
+  const userName = bodyList.filter((element) => {
+    return element.key === 'userName'
+  }).value;
 
   let status = 200;
   let response;
