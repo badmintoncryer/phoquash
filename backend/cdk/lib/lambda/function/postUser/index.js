@@ -1,39 +1,77 @@
 const sqlite3 = require("sqlite3");
-const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");
 
-const postUser = (userName) => {
-  db.serialize(() => {
-    db.run(
-      "SELECT userId from user where userName = ?",
-      userName,
-      (error, row) => {
+const postUser = async (userName) => {
+  const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");
+  // const db = new sqlite3.Database("../phoquash.sqlite3");
+
+  const get = (sql, params) => {
+    return new Promise((resolve, reject) => {
+      db.get(sql, params, (error, row) => {
         if (error) {
-          console.error("table error: " + error.message);
-          return;
+          reject(error);
         }
-        if (row.userId) {
-          return {
-            status: "OK",
-            userId: row.userId,
-          };
+        resolve(row);
+      });
+    });
+  };
+
+  const run = (sql, params) => {
+    return new Promise((resolve, reject) => {
+      db.run(sql, params, (error) => {
+        if (error) {
+          reject(error);
         }
-        db.run(
-          "INSERT INTO user(userName) values(?)",
-          userName,
-          (error, row) => {
-            if (error) {
-              console.error("table error: " + error.message);
-            }
-            console.log({ row });
-            return {
-              status: "OK",
-              userId: row.userId,
-            };
-          }
-        );
-      }
-    );
+        resolve();
+      });
+    });
+  };
+
+  const close = () => {
+    return new Promise((resolve, reject) => {
+      db.close((error) => {
+        if (error) {
+          reject(error);
+        }
+        resolve();
+      });
+    });
+  };
+
+  const existedUserId = await get(
+    "SELECT userId FROM user WHERE userName = ?",
+    [userName]
+  ).catch((error) => {
+    throw new Error("table error: " + error.message);
   });
+  if (existedUserId && existedUserId.userId) {
+    await close().catch((error) => {
+      throw new Error("table error: " + error.message);
+    });
+    return {
+      status: "OK",
+      userId: existedUserId.userId,
+    };
+  }
+  // 登録済みにのuserNameが存在しない場合、新しいuserの登録を行う
+  await run("INSERT INTO user(userName) values(?)", [userName]).catch(
+    (error) => {
+      throw new Error("table error: " + error.message);
+    }
+  );
+  // 新規登録したuserIdを取得してreturn
+  const registeredUserId = await get(
+    "SELECT userId FROM user WHERE userName = ?",
+    [userName]
+  ).catch((error) => {
+    throw new Error("table error: " + error.message);
+  });
+  await close().catch((error) => {
+    throw new Error("table error: " + error.message);
+  });
+  return {
+    status: "OK",
+    userId: registeredUserId.userId,
+  };
 };
 
 exports.handler = async (event) => {
@@ -45,19 +83,14 @@ exports.handler = async (event) => {
   });
 
   const userName = bodyList.filter((element) => {
-    return element.key === 'userName'
-  }).value;
+    return element["key"] === "userName";
+  })[0]["value"];
 
   let status = 200;
-  let response;
-  try {
-    response = postUser(userName);
-  } catch (e) {
-    console.log(e);
+  const response = await postUser(userName).catch((error) => {
+    console.log(error);
     status = 500;
-  }
-
-  console.log({ response });
+  });
 
   return {
     statusCode: status,
