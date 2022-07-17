@@ -148,6 +148,11 @@ export const TravelRecordCreateDialog = (
     });
   }, []);
 
+  // Blob型かを判断する関数
+  const isBlob = (blobOrBlobList: Blob | Blob[]): blobOrBlobList is Blob => {
+    return (blobOrBlobList as Blob).arrayBuffer() === undefined;
+  };
+
   const onChange = useCallback(
     (imageList: ImageType[]) => {
       imageList.forEach((image) => {
@@ -158,6 +163,10 @@ export const TravelRecordCreateDialog = (
             blob: dataUriToBlob(image.data_url),
             toType: "image/jpeg",
           }).then((conversionResult) => {
+            if (!isBlob(conversionResult)) {
+              console.error("conversionResult is not Blob");
+              return;
+            }
             const dataUrlReader = new FileReader();
             dataUrlReader.onload = (event) => {
               image.data_url = event.target!.result;
