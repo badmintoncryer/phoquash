@@ -31,7 +31,7 @@ export class Efs {
       createAcl: {
         ownerUid: "1001",
         ownerGid: "1001",
-        permissions: "750",
+        permissions: "755",
       },
       // enforce the POSIX identity so lambda function will access with this identity
       posixUser: {
