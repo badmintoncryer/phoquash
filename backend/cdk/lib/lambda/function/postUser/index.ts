@@ -7,7 +7,7 @@ interface userIdType {
 
 const postUser = async (userName: string) => {
   const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");
-  // const db = new sqlite3.Database("../phoquash.sqlite3");
+// const db = new sqlite3.Database("/Users/cryershinozukakazuho/git/phoquash/backend/cdk/phoquash.sqlite3");
 
   const get = (sql: string, params: string[]): Promise<userIdType> => {
     return new Promise((resolve, reject) => {
@@ -92,8 +92,6 @@ exports.handler = async (
       body: JSON.stringify({}),
     };
   }
-
-  console.log({event})
 
   // bodyパラメータを取得し、userNameをデコードする
   const decodedEventBody = Buffer.from(event.body, "base64").toString();

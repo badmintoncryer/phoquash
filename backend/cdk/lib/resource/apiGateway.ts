@@ -12,15 +12,18 @@ export class ApiGateway {
   private readonly userPool: cognito.UserPool;
   private readonly userPoolClient: cognito.UserPoolClient;
   private readonly postUserLambdaFunc: lambda.Function;
+  private readonly postTravelRecordLambdaFunc: lambda.Function;
 
   constructor(
     userPool: cognito.UserPool,
     userPoolClient: cognito.UserPoolClient,
-    postUser: lambda.Function
+    postUser: lambda.Function,
+    postTravelRecord: lambda.Function
   ) {
     this.userPool = userPool;
     this.userPoolClient = userPoolClient;
     this.postUserLambdaFunc = postUser;
+    this.postTravelRecordLambdaFunc = postTravelRecord;
   }
 
   public createResources(scope: Construct) {
@@ -32,7 +35,7 @@ export class ApiGateway {
         allowHeaders: ["authorization"],
       },
     });
-    const httpApi = this.httpApi
+    const httpApi = this.httpApi;
 
     this.authorizer = new authz.HttpUserPoolAuthorizer(
       "phoquashCognitoAuthorizer",
@@ -42,22 +45,31 @@ export class ApiGateway {
         userPoolClients: [this.userPoolClient],
       }
     );
-    const authorizer = this.authorizer
+    const authorizer = this.authorizer;
+    this.stage = new apigw.HttpStage(scope, "phoquashStage", {
+      httpApi,
+      stageName: "api",
+      autoDeploy: true,
+    });
 
     this.httpApi.addRoutes({
       methods: [apigw.HttpMethod.POST],
-      path: '/user',
+      path: "/user",
       integration: new intg.HttpLambdaIntegration(
-        'phoquashScenarioIntegration',
-        this.postUserLambdaFunc,
+        "phoquashScenarioIntegration",
+        this.postUserLambdaFunc
       ),
       authorizer,
-    })
+    });
 
-    this.stage = new apigw.HttpStage(scope, 'phoquashStage', {
-      httpApi,
-      stageName: 'api',
-      autoDeploy: true,
-    })
+    this.httpApi.addRoutes({
+      methods: [apigw.HttpMethod.POST],
+      path: "/travelRecord",
+      integration: new intg.HttpLambdaIntegration(
+        "phoquashScenarioIntegration",
+        this.postTravelRecordLambdaFunc
+      ),
+      authorizer,
+    });
   }
 }

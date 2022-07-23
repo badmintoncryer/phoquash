@@ -3,7 +3,7 @@ import sqlite3 = require("sqlite3");
 
 const createDb = async () => {
   const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");
-  // const db = new sqlite3.Database("../phoquash.sqlite3");
+  // const db = new sqlite3.Database("/Users/cryershinozukakazuho/git/phoquash/backend/cdk/phoquash.sqlite3");
 
   const run = (sql: string, params?: string[]) => {
     return new Promise<void>((resolve, reject) => {

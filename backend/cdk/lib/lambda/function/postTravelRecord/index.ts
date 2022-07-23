@@ -1,12 +1,25 @@
 import { Context, APIGatewayProxyResult, APIGatewayEvent } from "aws-lambda";
 import sqlite3 = require("sqlite3");
 
-const postTravelRecord = async () => {
-  const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");
+interface userIdType {
+  userId: number;
+}
 
-  const get = (sql: string, params: string[]): Promise<sqlite3.Database> => {
+interface postTravelRecordProps {
+  userName: string;
+  title: string;
+  startDate: number;
+  endDate: number;
+}
+const postTravelRecord = async (props: postTravelRecordProps) => {
+  const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");
+  // const db = new sqlite3.Database(
+  //   "/Users/cryershinozukakazuho/git/phoquash/backend/cdk/phoquash.sqlite3"
+  // );
+
+  const get = (sql: string, params: string[]): Promise<any> => {
     return new Promise((resolve, reject) => {
-      db.get(sql, params, (error: any, row: sqlite3.Database) => {
+      db.get(sql, params, (error: any, row: any) => {
         if (error) {
           reject(error);
         }
@@ -35,30 +48,45 @@ const postTravelRecord = async () => {
     });
   };
 
-  await run(
-    "INSERT INTO travelRecord(title,start,end,) values(?,?)",
-    "foo",
-    44
-  );
-};
-
-exports.handler = async (
-  event: APIGatewayEvent,
-  _context: Context
-): Promise<APIGatewayProxyResult> => {
-  // eventが空の場合早期return
-  if (!event || !event.body || !event.headers || !event.headers.authorization) {
-    return {
-      statusCode: 500,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-      body: JSON.stringify({}),
-    };
+  const userId: userIdType = await get(
+    "SELECT userId FROM user WHERE userName = ?",
+    [props.userName]
+  ).catch((error) => {
+    console.log(error);
+    throw new Error("table error: " + error.message);
+  });
+  if (!userId || !userId.userId) {
+    throw new Error("userName is not registered in user table");
   }
 
-  const idToken = event.headers.authorization.split(" ")[1];
+  await run(
+    "INSERT INTO travelRecord(title,start,end,userId) values(?,?,?,?)",
+    props.title,
+    props.startDate,
+    props.endDate,
+    userId.userId
+  ).catch((error) => {
+    console.log(error);
+    throw new Error("table error: " + error.message);
+  });
+
+  await close().catch((error) => {
+    throw new Error("table error: " + error.message);
+  });
+
+  return {
+    status: "OK",
+  };
+};
+
+/**
+ * cognitoに登録されているIDTokenからユーザー名を取得する
+ *
+ * @param {APIGatewayEvent} event
+ * @return {*}
+ */
+const getuserName = (event: APIGatewayEvent) => {
+  const idToken = event.headers.authorization!.split(" ")[1];
   const idTokenPayload = idToken.split(".")[1];
   const decodedIdTokenPayload = Buffer.from(
     idTokenPayload,
@@ -81,13 +109,45 @@ exports.handler = async (
     return element["key"] === "username";
   })[0]["value"];
 
+  return cognitoUserName;
+};
+
+/**
+ * event引数からbodyパラメータを抜き出す
+ *
+ * @param {APIGatewayEvent} event
+ * @return {*}
+ */
+const getBodyParameter = (event: APIGatewayEvent) => {
   // bodyパラメータを取得し、userNameをデコードする
-  const decodedEventBody = Buffer.from(event.body, "base64").toString();
+  const decodedEventBody = Buffer.from(event.body!, "base64").toString();
   const bodyList = decodedEventBody.split("&").map((keyValue) => {
     const key = keyValue.split("=")[0];
     const value = keyValue.split("=")[1];
     return { key: key, value: value };
   });
+
+  return bodyList;
+};
+
+exports.handler = async (
+  event: APIGatewayEvent,
+  _context: Context
+): Promise<APIGatewayProxyResult> => {
+  // eventが空の場合早期return
+  if (!event || !event.body || !event.headers || !event.headers.authorization) {
+    return {
+      statusCode: 500,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({}),
+    };
+  }
+
+  const userName = getuserName(event);
+  const bodyList = getBodyParameter(event);
 
   const title: string = bodyList.filter((element) => {
     return element["key"] === "title";
@@ -102,9 +162,14 @@ exports.handler = async (
   let status = 200;
   let response = {};
   try {
-    response = { cur_date: new Date() };
-  } catch (e) {
-    console.log(e);
+    response = await postTravelRecord({
+      userName: userName,
+      title: title,
+      startDate: Number(startDate),
+      endDate: Number(endDate),
+    });
+  } catch (error) {
+    console.log(error);
     status = 500;
   }
   return {
