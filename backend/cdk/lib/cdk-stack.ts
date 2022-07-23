@@ -27,8 +27,9 @@ export class CdkStack extends Stack {
     const apigw = new ApiGateway(
       cognito.userPool,
       cognito.userPoolClient,
-      lambda.postUser,
-      lambda.postTravelRecordLambda
+      lambda.postUserLambda,
+      lambda.postTravelRecordLambda,
+      lambda.postTravelLambda
     );
     apigw.createResources(this);
   }

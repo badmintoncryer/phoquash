@@ -8,9 +8,10 @@ import * as path from "path";
 const MOUNT_PATH = "/mnt/db";
 
 export class Lambda {
-  public createDb: lambda.Function;
-  public postUser: lambda.Function;
+  public createDbLambda: lambda.Function;
+  public postUserLambda: lambda.Function;
   public postTravelRecordLambda: lambda.Function;
+  public postTravelLambda: lambda.Function;
   public nodeLayer: lambda.LayerVersion;
   private readonly accessPoint: efs.AccessPoint;
   private readonly vpc: ec2.Vpc;
@@ -28,7 +29,7 @@ export class Lambda {
       layerVersionName: "node-layer",
     });
 
-    this.createDb = new nodeLambda.NodejsFunction(scope, "createDb", {
+    this.createDbLambda = new nodeLambda.NodejsFunction(scope, "createDb", {
       bundling: {
         externalModules: ["sqlite3"],
       },
@@ -43,7 +44,7 @@ export class Lambda {
       vpc: this.vpc,
     });
 
-    this.postUser = new nodeLambda.NodejsFunction(scope, "postUser", {
+    this.postUserLambda = new nodeLambda.NodejsFunction(scope, "postUser", {
       bundling: {
         externalModules: ["sqlite3"],
       },
@@ -75,6 +76,28 @@ export class Lambda {
         entry: path.join(
           __dirname,
           "../lambda/function/postTravelRecord/index.ts"
+        ),
+        vpc: this.vpc,
+      }
+    );
+
+    this.postTravelLambda = new nodeLambda.NodejsFunction(
+      scope,
+      "postTravelLambda",
+      {
+        bundling: {
+          externalModules: ["sqlite3"],
+        },
+        filesystem: lambda.FileSystem.fromEfsAccessPoint(
+          this.accessPoint,
+          MOUNT_PATH
+        ),
+        layers: [this.nodeLayer],
+        runtime: lambda.Runtime.NODEJS_16_X,
+        handler: "handler",
+        entry: path.join(
+          __dirname,
+          "../lambda/function/postTravel/index.ts"
         ),
         vpc: this.vpc,
       }

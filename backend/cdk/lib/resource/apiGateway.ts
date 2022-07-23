@@ -11,19 +11,22 @@ export class ApiGateway {
   public stage: apigw.HttpStage;
   private readonly userPool: cognito.UserPool;
   private readonly userPoolClient: cognito.UserPoolClient;
-  private readonly postUserLambdaFunc: lambda.Function;
-  private readonly postTravelRecordLambdaFunc: lambda.Function;
+  private readonly postUserLambda: lambda.Function;
+  private readonly postTravelRecordLambda: lambda.Function;
+  private readonly postTravelLambda: lambda.Function;
 
   constructor(
     userPool: cognito.UserPool,
     userPoolClient: cognito.UserPoolClient,
-    postUser: lambda.Function,
-    postTravelRecord: lambda.Function
+    postUserLambda: lambda.Function,
+    postTravelRecordLambda: lambda.Function,
+    postTravelLambda: lambda.Function
   ) {
     this.userPool = userPool;
     this.userPoolClient = userPoolClient;
-    this.postUserLambdaFunc = postUser;
-    this.postTravelRecordLambdaFunc = postTravelRecord;
+    this.postUserLambda = postUserLambda;
+    this.postTravelRecordLambda = postTravelRecordLambda;
+    this.postTravelLambda = postTravelLambda;
   }
 
   public createResources(scope: Construct) {
@@ -36,7 +39,6 @@ export class ApiGateway {
       },
     });
     const httpApi = this.httpApi;
-
     this.authorizer = new authz.HttpUserPoolAuthorizer(
       "phoquashCognitoAuthorizer",
       this.userPool,
@@ -52,22 +54,31 @@ export class ApiGateway {
       autoDeploy: true,
     });
 
+    // ルート定義及びlambdaとの統合
     this.httpApi.addRoutes({
       methods: [apigw.HttpMethod.POST],
       path: "/user",
       integration: new intg.HttpLambdaIntegration(
         "phoquashScenarioIntegration",
-        this.postUserLambdaFunc
+        this.postUserLambda
       ),
       authorizer,
     });
-
     this.httpApi.addRoutes({
       methods: [apigw.HttpMethod.POST],
       path: "/travelRecord",
       integration: new intg.HttpLambdaIntegration(
         "phoquashScenarioIntegration",
-        this.postTravelRecordLambdaFunc
+        this.postTravelRecordLambda
+      ),
+      authorizer,
+    });
+    this.httpApi.addRoutes({
+      methods: [apigw.HttpMethod.POST],
+      path: "/travel",
+      integration: new intg.HttpLambdaIntegration(
+        "phoquashScenarioIntegration",
+        this.postTravelLambda
       ),
       authorizer,
     });
