@@ -1,8 +1,11 @@
 import { Construct } from "constructs";
 import * as efs from "aws-cdk-lib/aws-efs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as nodeLambda from "aws-cdk-lib/aws-lambda-nodejs";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as path from "path";
+
+const MOUNT_PATH = "/mnt/db";
 
 export class Lambda {
   public createDb: lambda.Function;
@@ -25,56 +28,42 @@ export class Lambda {
       layerVersionName: "node-layer",
     });
 
-    this.createDb = new lambda.Function(
-      scope,
-      "createDb",
-      {
-        filesystem: lambda.FileSystem.fromEfsAccessPoint(
-          this.accessPoint,
-          "/mnt/db"
-        ),
-        layers: [this.nodeLayer],
-        runtime: lambda.Runtime.NODEJS_16_X,
-        handler: "index.handler",
-        code: lambda.Code.fromAsset(
-          path.join(__dirname, "../lambda/function/createDb")
-        ),
-        vpc: this.vpc,
-      }
-    )
+    this.createDb = new nodeLambda.NodejsFunction(scope, "createDb", {
+      filesystem: lambda.FileSystem.fromEfsAccessPoint(
+        this.accessPoint,
+        MOUNT_PATH
+      ),
+      layers: [this.nodeLayer],
+      runtime: lambda.Runtime.NODEJS_16_X,
+      handler: "index.handler",
+      entry: path.join(__dirname, "../lambda/function/createDb"),
+      vpc: this.vpc,
+    });
 
-    this.postUser = new lambda.Function(
-      scope,
-      "postUser",
-      {
-        filesystem: lambda.FileSystem.fromEfsAccessPoint(
-          this.accessPoint,
-          "/mnt/db"
-        ),
-        layers: [this.nodeLayer],
-        runtime: lambda.Runtime.NODEJS_16_X,
-        handler: "index.handler",
-        code: lambda.Code.fromAsset(
-          path.join(__dirname, "../lambda/function/postUser")
-        ),
-        vpc: this.vpc,
-      }
-    )
+    this.postUser = new nodeLambda.NodejsFunction(scope, "postUser", {
+      filesystem: lambda.FileSystem.fromEfsAccessPoint(
+        this.accessPoint,
+        MOUNT_PATH
+      ),
+      layers: [this.nodeLayer],
+      runtime: lambda.Runtime.NODEJS_16_X,
+      handler: "index.handler",
+      entry: path.join(__dirname, "../lambda/function/postUser"),
+      vpc: this.vpc,
+    });
 
-    this.postTravelRecordLambda = new lambda.Function(
+    this.postTravelRecordLambda = new nodeLambda.NodejsFunction(
       scope,
       "postTravelRecordLambda",
       {
         filesystem: lambda.FileSystem.fromEfsAccessPoint(
           this.accessPoint,
-          "/mnt/db"
+          MOUNT_PATH
         ),
         layers: [this.nodeLayer],
         runtime: lambda.Runtime.NODEJS_16_X,
         handler: "index.handler",
-        code: lambda.Code.fromAsset(
-          path.join(__dirname, "../lambda/function/postTravelRecord")
-        ),
+        entry: path.join(__dirname, "../lambda/function/postTravelRecord"),
         vpc: this.vpc,
       }
     );
