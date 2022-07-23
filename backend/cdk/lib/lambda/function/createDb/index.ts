@@ -1,12 +1,13 @@
-const sqlite3 = require("sqlite3");
+import { Context, APIGatewayProxyResult, APIGatewayEvent } from "aws-lambda";
+import sqlite3 = require("sqlite3");
 
 const createDb = async () => {
   const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");
   // const db = new sqlite3.Database("../phoquash.sqlite3");
 
-  const run = (sql, params) => {
-    return new Promise((resolve, reject) => {
-      db.run(sql, params, (error) => {
+  const run = (sql: string, params?: string[]) => {
+    return new Promise<void>((resolve, reject) => {
+      db.run(sql, params, (error: any) => {
         if (error) {
           reject(error);
         }
@@ -14,21 +15,9 @@ const createDb = async () => {
       });
     });
   };
-
-  const get = (sql, params) => {
-    return new Promise((resolve, reject) => {
-      db.get(sql, params, (error, row) => {
-        if (error) {
-          reject(error);
-        }
-        resolve(row);
-      });
-    });
-  };
-
   const close = () => {
-    return new Promise((resolve, reject) => {
-      db.close((error) => {
+    return new Promise<void>((resolve, reject) => {
+      db.close((error: any) => {
         if (error) {
           reject(error);
         }
@@ -36,6 +25,7 @@ const createDb = async () => {
       });
     });
   };
+
   await run("DROP TABLE IF EXISTS user").catch((error) => {
     console.log(error);
     throw new Error("table error: " + error.message);
@@ -109,7 +99,10 @@ const createDb = async () => {
   });
 };
 
-exports.handler = async (event, context) => {
+exports.handler = async (
+  event: APIGatewayEvent,
+  _context: Context
+): Promise<APIGatewayProxyResult> => {
   let status = 200;
   let response = {
     status: "Successfully created DB",

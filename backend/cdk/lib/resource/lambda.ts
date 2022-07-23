@@ -29,26 +29,32 @@ export class Lambda {
     });
 
     this.createDb = new nodeLambda.NodejsFunction(scope, "createDb", {
+      bundling: {
+        externalModules: ["sqlite3"],
+      },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(
         this.accessPoint,
         MOUNT_PATH
       ),
       layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
-      handler: "index.handler",
-      entry: path.join(__dirname, "../lambda/function/createDb"),
+      handler: "handler",
+      entry: path.join(__dirname, "../lambda/function/createDb/index.ts"),
       vpc: this.vpc,
     });
 
     this.postUser = new nodeLambda.NodejsFunction(scope, "postUser", {
+      bundling: {
+        externalModules: ["sqlite3"],
+      },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(
         this.accessPoint,
         MOUNT_PATH
       ),
       layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
-      handler: "index.handler",
-      entry: path.join(__dirname, "../lambda/function/postUser"),
+      handler: "handler",
+      entry: path.join(__dirname, "../lambda/function/postUser/index.ts"),
       vpc: this.vpc,
     });
 
@@ -56,14 +62,20 @@ export class Lambda {
       scope,
       "postTravelRecordLambda",
       {
+        bundling: {
+          externalModules: ["sqlite3"],
+        },
         filesystem: lambda.FileSystem.fromEfsAccessPoint(
           this.accessPoint,
           MOUNT_PATH
         ),
         layers: [this.nodeLayer],
         runtime: lambda.Runtime.NODEJS_16_X,
-        handler: "index.handler",
-        entry: path.join(__dirname, "../lambda/function/postTravelRecord"),
+        handler: "handler",
+        entry: path.join(
+          __dirname,
+          "../lambda/function/postTravelRecord/index.ts"
+        ),
         vpc: this.vpc,
       }
     );

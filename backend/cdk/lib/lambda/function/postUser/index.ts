@@ -1,12 +1,17 @@
-const sqlite3 = require("sqlite3");
+import { Context, APIGatewayProxyResult, APIGatewayEvent } from "aws-lambda";
+import sqlite3 = require("sqlite3");
 
-const postUser = async (userName) => {
+interface userIdType {
+  userId: number;
+}
+
+const postUser = async (userName: string) => {
   const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");
   // const db = new sqlite3.Database("../phoquash.sqlite3");
 
-  const get = (sql, params) => {
+  const get = (sql: string, params: string[]): Promise<userIdType> => {
     return new Promise((resolve, reject) => {
-      db.get(sql, params, (error, row) => {
+      db.get(sql, params, (error: any, row: userIdType) => {
         if (error) {
           reject(error);
         }
@@ -14,10 +19,9 @@ const postUser = async (userName) => {
       });
     });
   };
-
-  const run = (sql, params) => {
-    return new Promise((resolve, reject) => {
-      db.run(sql, params, (error) => {
+  const run = (sql: string, params: string[]) => {
+    return new Promise<void>((resolve, reject) => {
+      db.run(sql, params, (error: any) => {
         if (error) {
           reject(error);
         }
@@ -25,10 +29,9 @@ const postUser = async (userName) => {
       });
     });
   };
-
   const close = () => {
-    return new Promise((resolve, reject) => {
-      db.close((error) => {
+    return new Promise<void>((resolve, reject) => {
+      db.close((error: any) => {
         if (error) {
           reject(error);
         }
@@ -37,7 +40,7 @@ const postUser = async (userName) => {
     });
   };
 
-  const existedUserId = await get(
+  const existedUserId: userIdType = await get(
     "SELECT userId FROM user WHERE userName = ?",
     [userName]
   ).catch((error) => {
@@ -59,7 +62,7 @@ const postUser = async (userName) => {
     }
   );
   // 新規登録したuserIdを取得してreturn
-  const registeredUserId = await get(
+  const registeredUserId: userIdType = await get(
     "SELECT userId FROM user WHERE userName = ?",
     [userName]
   ).catch((error) => {
@@ -74,7 +77,23 @@ const postUser = async (userName) => {
   };
 };
 
-exports.handler = async (event) => {
+exports.handler = async (
+  event: APIGatewayEvent,
+  _context: Context
+): Promise<APIGatewayProxyResult> => {
+  // eventが空の場合早期return
+  if (!event || !event.body) {
+    return {
+      statusCode: 500,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({}),
+    };
+  }
+
+  // bodyパラメータを取得し、userNameをデコードする
   const decodedEventBody = Buffer.from(event.body, "base64").toString();
   const bodyList = decodedEventBody.split("&").map((keyValue) => {
     const key = keyValue.split("=")[0];

@@ -1,7 +1,11 @@
-const sqlite3 = require("sqlite3");
-const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");
+import { Context, APIGatewayProxyResult, APIGatewayEvent } from "aws-lambda";
+import sqlite3 = require("sqlite3");
 
-exports.handler = async (event, context) => {
+exports.handler = async (
+  _event: APIGatewayEvent,
+  _context: Context
+): Promise<APIGatewayProxyResult> => {
+  const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");
   db.serialize(() => {
     db.run(
       "INSERT INTO travelRecord(title,start,end,) values(?,?)",
