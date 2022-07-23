@@ -93,6 +93,8 @@ exports.handler = async (
     };
   }
 
+  console.log({event})
+
   // bodyパラメータを取得し、userNameをデコードする
   const decodedEventBody = Buffer.from(event.body, "base64").toString();
   const bodyList = decodedEventBody.split("&").map((keyValue) => {
