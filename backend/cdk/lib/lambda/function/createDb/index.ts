@@ -48,8 +48,8 @@ const createDb = async () => {
   });
   await run(
     "CREATE TABLE IF NOT EXISTS user( \
-          userId integer primary key autoincrement, \
-          userName text \
+          userId integer primary key autoincrement not null, \
+          userName text not null \
           )"
   ).catch((error) => {
     console.log(error);
@@ -57,11 +57,11 @@ const createDb = async () => {
   });
   await run(
     "CREATE TABLE IF NOT EXISTS travelRecord( \
-          travelRecordId integer primary key autoincrement, \
-          title text, \
-          start numeric, \
-          end numeric, \
-          userId integer, \
+          travelRecordId integer primary key autoincrement not null, \
+          title text not null, \
+          start numeric not null, \
+          end numeric not null, \
+          userId integer not null, \
           foreign key (userId) references user(userId) \
         )"
   ).catch((error) => {
@@ -70,9 +70,9 @@ const createDb = async () => {
   });
   await run(
     "CREATE TABLE IF NOT EXISTS travel( \
-          travelId integer primary key autoincrement, \
-          userId integer, \
-          travelRecordId integer, \
+          travelId integer primary key autoincrement not null, \
+          userId integer not null, \
+          travelRecordId integer not null, \
           foreign key (userId) references user(userId), \
           foreign key (travelRecordId) references travelRecord(travelRecordId) \
         )"
@@ -82,12 +82,12 @@ const createDb = async () => {
   });
   await run(
     "CREATE TABLE IF NOT EXISTS photo( \
-          photoId integer primary key autoincrement, \
+          photoId integer primary key autoincrement not null, \
           description text, \
-          travelId integer, \
-          fileName text, \
-          filePath text, \
-          isFavorite integer, \
+          travelId integer not null, \
+          fileName text not null, \
+          filePath text not null, \
+          isFavorite integer not null, \
           foreign key (travelId) references travelRecord(travelId) \
         )"
   ).catch((error) => {

@@ -17,7 +17,7 @@ const postTravelRecord = async (props: postTravelRecordProps) => {
   //   "/Users/cryershinozukakazuho/git/phoquash/backend/cdk/phoquash.sqlite3"
   // );
 
-  const get = (sql: string, params: string[]): Promise<any> => {
+  const get = (sql: string, params: (string | number)[]): Promise<any> => {
     return new Promise((resolve, reject) => {
       db.get(sql, params, (error: any, row: any) => {
         if (error) {
@@ -59,6 +59,21 @@ const postTravelRecord = async (props: postTravelRecordProps) => {
     throw new Error("userName is not registered in user table");
   }
 
+  const registeredTravelRecord = await get(
+    "SELECT travelRecordId FROM travelRecord WHERE title = ? and start = ? and end = ?",
+    [props.title, props.startDate, props.endDate]
+  ).catch((error) => {
+    console.log(error);
+    throw new Error("table error: " + error.message);
+  });
+
+  if (registeredTravelRecord) {
+    return {
+      status: "OK",
+      message: "same travelRecord is already registered",
+    };
+  }
+
   await run(
     "INSERT INTO travelRecord(title,start,end,userId) values(?,?,?,?)",
     props.title,
@@ -76,6 +91,7 @@ const postTravelRecord = async (props: postTravelRecordProps) => {
 
   return {
     status: "OK",
+    message: "Successfully registered travelRecord",
   };
 };
 
@@ -148,6 +164,8 @@ exports.handler = async (
 
   const userName = getuserName(event);
   const bodyList = getBodyParameter(event);
+
+  console.log({ bodyList });
 
   const title: string = bodyList.filter((element) => {
     return element["key"] === "title";

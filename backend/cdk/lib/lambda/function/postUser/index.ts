@@ -77,6 +77,39 @@ const postUser = async (userName: string) => {
   };
 };
 
+/**
+ * cognitoに登録されているIDTokenからユーザー名を取得する
+ *
+ * @param {APIGatewayEvent} event
+ * @return {*}
+ */
+const getuserName = (event: APIGatewayEvent) => {
+  const idToken = event.headers.authorization!.split(" ")[1];
+  const idTokenPayload = idToken.split(".")[1];
+  const decodedIdTokenPayload = Buffer.from(
+    idTokenPayload,
+    "base64"
+  ).toString();
+  const payloadList = decodedIdTokenPayload
+    .replace("{", "")
+    .replace("}", "")
+    // 全ての"を置換する
+    .replace(/"/g, "")
+    .split(",")
+    .map((keyValue) => {
+      console.log(keyValue.split(":").slice(-2));
+      // "key":"value"が基本だが、"cognito:username":"xxx"となっているので、どちらにも対応できるようにしている。
+      const key = keyValue.split(":").slice(-2)[0];
+      const value = keyValue.split(":").slice(-2)[1];
+      return { key: key, value: value };
+    });
+  const cognitoUserName = payloadList.filter((element) => {
+    return element["key"] === "username";
+  })[0]["value"];
+
+  return cognitoUserName;
+};
+
 exports.handler = async (
   event: APIGatewayEvent,
   _context: Context
@@ -89,21 +122,22 @@ exports.handler = async (
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
       },
-      body: JSON.stringify({}),
+      body: JSON.stringify({status: "OK", message: "event format is invalid"}),
     };
   }
 
   // bodyパラメータを取得し、userNameをデコードする
-  const decodedEventBody = Buffer.from(event.body, "base64").toString();
-  const bodyList = decodedEventBody.split("&").map((keyValue) => {
-    const key = keyValue.split("=")[0];
-    const value = keyValue.split("=")[1];
-    return { key: key, value: value };
-  });
+  // const decodedEventBody = Buffer.from(event.body, "base64").toString();
+  // const bodyList = decodedEventBody.split("&").map((keyValue) => {
+  //   const key = keyValue.split("=")[0];
+  //   const value = keyValue.split("=")[1];
+  //   return { key: key, value: value };
+  // });
 
-  const userName = bodyList.filter((element) => {
-    return element["key"] === "userName";
-  })[0]["value"];
+  // const userName = bodyList.filter((element) => {
+  //   return element["key"] === "userName";
+  // })[0]["value"];
+  const userName = getuserName(event)
 
   let status = 200;
   const response = await postUser(userName).catch((error) => {
