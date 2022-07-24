@@ -9,13 +9,13 @@ interface travelRecordIdType {
   travelRecordId: number;
 }
 
-interface postTravelProps {
+interface deleteTravelProps {
   userName: string;
   title: string;
   startDate: number;
   endDate: number;
 }
-const postTravel = async (props: postTravelProps) => {
+const deleteTravel = async (props: deleteTravelProps) => {
   const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");
   // const db = new sqlite3.Database(
   //   "/Users/cryershinozukakazuho/git/phoquash/backend/cdk/phoquash.sqlite3"
@@ -77,7 +77,7 @@ const postTravel = async (props: postTravelProps) => {
     throw new Error("travelRecord is not registered in travelRecord table");
   }
 
-  const registeredTravel = await get(
+  const registeredTravelId = await get(
     "SELECT travelId FROM travel WHERE userId = ? and travelRecordId = ?",
     [userId.userId, travelRecordId.travelRecordId]
   ).catch((error) => {
@@ -85,18 +85,17 @@ const postTravel = async (props: postTravelProps) => {
     throw new Error("table error: " + error.message);
   });
 
-  // 既に同一のtravelが登録されている場合、これ以上の登録は行わない
-  if (registeredTravel) {
+  // 既に同一のtravelが登録されていない場合、何も行わない
+  if (!registeredTravelId || !registeredTravelId.travelId) {
     return {
       status: "OK",
-      message: "same travel is already registered",
+      message: "travel is already removed",
     };
   }
 
   await run(
-    "INSERT INTO travel(userId,travelRecordId) values(?,?)",
-    userId.userId,
-    travelRecordId.travelRecordId
+    "DELETE FROM travel WHERE travelId = ?",
+    [registeredTravelId.travelId]
   ).catch((error) => {
     console.log(error);
     throw new Error("table error: " + error.message);
@@ -108,7 +107,7 @@ const postTravel = async (props: postTravelProps) => {
 
   return {
     status: "OK",
-    message: "travel is successfully registered",
+    message: "travel is successfully deleted",
   };
 };
 
@@ -196,7 +195,7 @@ exports.handler = async (
   let status = 200;
   let response = {};
   try {
-    response = await postTravel({
+    response = await deleteTravel({
       userName: userName,
       title: title,
       startDate: Number(startDate),

@@ -29,7 +29,8 @@ export class CdkStack extends Stack {
       cognito.userPoolClient,
       lambda.postUserLambda,
       lambda.postTravelRecordLambda,
-      lambda.postTravelLambda
+      lambda.postTravelLambda,
+      lambda.deleteTravelLambda,
     );
     apigw.createResources(this);
   }

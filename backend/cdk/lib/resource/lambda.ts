@@ -12,6 +12,7 @@ export class Lambda {
   public postUserLambda: lambda.Function;
   public postTravelRecordLambda: lambda.Function;
   public postTravelLambda: lambda.Function;
+  public deleteTravelLambda: lambda.Function;
   public nodeLayer: lambda.LayerVersion;
   private readonly accessPoint: efs.AccessPoint;
   private readonly vpc: ec2.Vpc;
@@ -95,10 +96,26 @@ export class Lambda {
         layers: [this.nodeLayer],
         runtime: lambda.Runtime.NODEJS_16_X,
         handler: "handler",
-        entry: path.join(
-          __dirname,
-          "../lambda/function/postTravel/index.ts"
+        entry: path.join(__dirname, "../lambda/function/postTravel/index.ts"),
+        vpc: this.vpc,
+      }
+    );
+
+    this.deleteTravelLambda = new nodeLambda.NodejsFunction(
+      scope,
+      "deleteTravelLambda",
+      {
+        bundling: {
+          externalModules: ["sqlite3"],
+        },
+        filesystem: lambda.FileSystem.fromEfsAccessPoint(
+          this.accessPoint,
+          MOUNT_PATH
         ),
+        layers: [this.nodeLayer],
+        runtime: lambda.Runtime.NODEJS_16_X,
+        handler: "handler",
+        entry: path.join(__dirname, "../lambda/function/deleteTravel/index.ts"),
         vpc: this.vpc,
       }
     );

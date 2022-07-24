@@ -14,19 +14,22 @@ export class ApiGateway {
   private readonly postUserLambda: lambda.Function;
   private readonly postTravelRecordLambda: lambda.Function;
   private readonly postTravelLambda: lambda.Function;
+  private readonly deleteTravelLambda: lambda.Function;
 
   constructor(
     userPool: cognito.UserPool,
     userPoolClient: cognito.UserPoolClient,
     postUserLambda: lambda.Function,
     postTravelRecordLambda: lambda.Function,
-    postTravelLambda: lambda.Function
+    postTravelLambda: lambda.Function,
+    deleteTravelLambda: lambda.Function
   ) {
     this.userPool = userPool;
     this.userPoolClient = userPoolClient;
     this.postUserLambda = postUserLambda;
     this.postTravelRecordLambda = postTravelRecordLambda;
     this.postTravelLambda = postTravelLambda;
+    this.deleteTravelLambda = deleteTravelLambda;
   }
 
   public createResources(scope: Construct) {
@@ -79,6 +82,15 @@ export class ApiGateway {
       integration: new intg.HttpLambdaIntegration(
         "phoquashScenarioIntegration",
         this.postTravelLambda
+      ),
+      authorizer,
+    });
+    this.httpApi.addRoutes({
+      methods: [apigw.HttpMethod.DELETE],
+      path: "/travel",
+      integration: new intg.HttpLambdaIntegration(
+        "phoquashScenarioIntegration",
+        this.deleteTravelLambda
       ),
       authorizer,
     });
