@@ -11,6 +11,7 @@ export class Lambda {
   public createDbLambda: lambda.Function;
   public postUserLambda: lambda.Function;
   public postTravelRecordLambda: lambda.Function;
+    public deleteTravelRecordLambda: lambda.Function;
   public postTravelLambda: lambda.Function;
   public deleteTravelLambda: lambda.Function;
   public nodeLayer: lambda.LayerVersion;
@@ -81,6 +82,27 @@ export class Lambda {
         vpc: this.vpc,
       }
     );
+    this.deleteTravelRecordLambda = new nodeLambda.NodejsFunction(
+      scope,
+      "deleteTravelRecordLambda",
+      {
+        bundling: {
+          externalModules: ["sqlite3"],
+        },
+        filesystem: lambda.FileSystem.fromEfsAccessPoint(
+          this.accessPoint,
+          MOUNT_PATH
+        ),
+        layers: [this.nodeLayer],
+        runtime: lambda.Runtime.NODEJS_16_X,
+        handler: "handler",
+        entry: path.join(
+          __dirname,
+          "../lambda/function/deleteTravelRecord/index.ts"
+        ),
+        vpc: this.vpc,
+      }
+    );
 
     this.postTravelLambda = new nodeLambda.NodejsFunction(
       scope,
@@ -100,7 +122,6 @@ export class Lambda {
         vpc: this.vpc,
       }
     );
-
     this.deleteTravelLambda = new nodeLambda.NodejsFunction(
       scope,
       "deleteTravelLambda",

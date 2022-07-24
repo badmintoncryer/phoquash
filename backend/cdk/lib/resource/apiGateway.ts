@@ -13,6 +13,7 @@ export class ApiGateway {
   private readonly userPoolClient: cognito.UserPoolClient;
   private readonly postUserLambda: lambda.Function;
   private readonly postTravelRecordLambda: lambda.Function;
+  private readonly deleteTravelRecordLambda: lambda.Function;
   private readonly postTravelLambda: lambda.Function;
   private readonly deleteTravelLambda: lambda.Function;
 
@@ -21,6 +22,7 @@ export class ApiGateway {
     userPoolClient: cognito.UserPoolClient,
     postUserLambda: lambda.Function,
     postTravelRecordLambda: lambda.Function,
+    deleteTravelRecordLambda: lambda.Function,
     postTravelLambda: lambda.Function,
     deleteTravelLambda: lambda.Function
   ) {
@@ -28,6 +30,7 @@ export class ApiGateway {
     this.userPoolClient = userPoolClient;
     this.postUserLambda = postUserLambda;
     this.postTravelRecordLambda = postTravelRecordLambda;
+    this.deleteTravelRecordLambda = deleteTravelRecordLambda;
     this.postTravelLambda = postTravelLambda;
     this.deleteTravelLambda = deleteTravelLambda;
   }
@@ -73,6 +76,15 @@ export class ApiGateway {
       integration: new intg.HttpLambdaIntegration(
         "phoquashScenarioIntegration",
         this.postTravelRecordLambda
+      ),
+      authorizer,
+    });
+    this.httpApi.addRoutes({
+      methods: [apigw.HttpMethod.DELETE],
+      path: "/travelRecord",
+      integration: new intg.HttpLambdaIntegration(
+        "phoquashScenarioIntegration",
+        this.deleteTravelRecordLambda
       ),
       authorizer,
     });
