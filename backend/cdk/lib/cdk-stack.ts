@@ -28,6 +28,7 @@ export class CdkStack extends Stack {
       cognito.userPool,
       cognito.userPoolClient,
       lambda.postUserLambda,
+      lambda.deleteUserLambda,
       lambda.postTravelRecordLambda,
       lambda.deleteTravelRecordLambda,
       lambda.postTravelLambda,

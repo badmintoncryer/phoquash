@@ -10,6 +10,7 @@ const MOUNT_PATH = "/mnt/db";
 export class Lambda {
   public createDbLambda: lambda.Function;
   public postUserLambda: lambda.Function;
+  public deleteUserLambda: lambda.Function;
   public postTravelRecordLambda: lambda.Function;
   public deleteTravelRecordLambda: lambda.Function;
   public postTravelLambda: lambda.Function;
@@ -58,6 +59,20 @@ export class Lambda {
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: "handler",
       entry: path.join(__dirname, "../lambda/function/user/createUser.ts"),
+      vpc: this.vpc,
+    });
+    this.deleteUserLambda = new nodeLambda.NodejsFunction(scope, "deleteUser", {
+      bundling: {
+        externalModules: ["sqlite3"],
+      },
+      filesystem: lambda.FileSystem.fromEfsAccessPoint(
+        this.accessPoint,
+        MOUNT_PATH
+      ),
+      layers: [this.nodeLayer],
+      runtime: lambda.Runtime.NODEJS_16_X,
+      handler: "handler",
+      entry: path.join(__dirname, "../lambda/function/user/deleteUser.ts"),
       vpc: this.vpc,
     });
 
