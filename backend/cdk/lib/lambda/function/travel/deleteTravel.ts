@@ -1,4 +1,4 @@
-import { Context, APIGatewayProxyResult, APIGatewayEvent } from "aws-lambda";
+import { Context, APIGatewayProxyResult, APIGatewayProxyEventV2WithJWTAuthorizer } from "aws-lambda";
 import sqlite3 = require("sqlite3");
 
 interface userIdType {
@@ -114,10 +114,10 @@ const deleteTravel = async (props: deleteTravelProps) => {
 /**
  * cognitoに登録されているIDTokenからユーザー名を取得する
  *
- * @param {APIGatewayEvent} event
+ * @param {APIGatewayProxyEventV2WithJWTAuthorizer} event
  * @return {*}
  */
-const getuserName = (event: APIGatewayEvent) => {
+const getuserName = (event: APIGatewayProxyEventV2WithJWTAuthorizer) => {
   const idToken = event.headers.authorization!.split(" ")[1];
   const idTokenPayload = idToken.split(".")[1];
   const decodedIdTokenPayload = Buffer.from(
@@ -147,10 +147,10 @@ const getuserName = (event: APIGatewayEvent) => {
 /**
  * event引数からbodyパラメータを抜き出す
  *
- * @param {APIGatewayEvent} event
+ * @param {APIGatewayProxyEventV2WithJWTAuthorizer} event
  * @return {*}
  */
-const getBodyParameter = (event: APIGatewayEvent) => {
+const getBodyParameter = (event: APIGatewayProxyEventV2WithJWTAuthorizer) => {
   // bodyパラメータを取得し、userNameをデコードする
   const decodedEventBody = Buffer.from(event.body!, "base64").toString();
   const bodyList = decodedEventBody.split("&").map((keyValue) => {
@@ -163,7 +163,7 @@ const getBodyParameter = (event: APIGatewayEvent) => {
 };
 
 exports.handler = async (
-  event: APIGatewayEvent,
+  event: APIGatewayProxyEventV2WithJWTAuthorizer,
   _context: Context
 ): Promise<APIGatewayProxyResult> => {
   console.log({ event });

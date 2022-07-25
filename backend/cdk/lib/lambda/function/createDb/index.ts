@@ -1,4 +1,4 @@
-import { Context, APIGatewayProxyResult, APIGatewayEvent } from "aws-lambda";
+import { Context, APIGatewayProxyResult, APIGatewayProxyEventV2WithJWTAuthorizer } from "aws-lambda";
 import sqlite3 = require("sqlite3");
 
 const createDb = async () => {
@@ -100,7 +100,7 @@ const createDb = async () => {
 };
 
 exports.handler = async (
-  event: APIGatewayEvent,
+  event: APIGatewayProxyEventV2WithJWTAuthorizer,
   _context: Context
 ): Promise<APIGatewayProxyResult> => {
   let status = 200;
