@@ -11,7 +11,7 @@ export class Lambda {
   public createDbLambda: lambda.Function;
   public postUserLambda: lambda.Function;
   public postTravelRecordLambda: lambda.Function;
-    public deleteTravelRecordLambda: lambda.Function;
+  public deleteTravelRecordLambda: lambda.Function;
   public postTravelLambda: lambda.Function;
   public deleteTravelLambda: lambda.Function;
   public nodeLayer: lambda.LayerVersion;
@@ -57,7 +57,7 @@ export class Lambda {
       layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: "handler",
-      entry: path.join(__dirname, "../lambda/function/postUser/index.ts"),
+      entry: path.join(__dirname, "../lambda/function/user/createUser.ts"),
       vpc: this.vpc,
     });
 
@@ -77,7 +77,7 @@ export class Lambda {
         handler: "handler",
         entry: path.join(
           __dirname,
-          "../lambda/function/postTravelRecord/index.ts"
+          "../lambda/function/travelRecord/createTravelRecord.ts"
         ),
         vpc: this.vpc,
       }
@@ -98,7 +98,7 @@ export class Lambda {
         handler: "handler",
         entry: path.join(
           __dirname,
-          "../lambda/function/deleteTravelRecord/index.ts"
+          "../lambda/function/travelRecord/deleteTravelRecord.ts"
         ),
         vpc: this.vpc,
       }
@@ -118,7 +118,10 @@ export class Lambda {
         layers: [this.nodeLayer],
         runtime: lambda.Runtime.NODEJS_16_X,
         handler: "handler",
-        entry: path.join(__dirname, "../lambda/function/postTravel/index.ts"),
+        entry: path.join(
+          __dirname,
+          "../lambda/function/travel/createTravel.ts"
+        ),
         vpc: this.vpc,
       }
     );
@@ -136,7 +139,10 @@ export class Lambda {
         layers: [this.nodeLayer],
         runtime: lambda.Runtime.NODEJS_16_X,
         handler: "handler",
-        entry: path.join(__dirname, "../lambda/function/deleteTravel/index.ts"),
+        entry: path.join(
+          __dirname,
+          "../lambda/function/travel/deleteTravel.ts"
+        ),
         vpc: this.vpc,
       }
     );
