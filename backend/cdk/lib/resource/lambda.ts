@@ -11,6 +11,7 @@ export class Lambda {
   public createDbLambda: lambda.Function;
   public postUserLambda: lambda.Function;
   public deleteUserLambda: lambda.Function;
+  public deleteUserByIdLambda: lambda.Function;
   public postTravelRecordLambda: lambda.Function;
   public deleteTravelRecordLambda: lambda.Function;
   public postTravelLambda: lambda.Function;
@@ -75,6 +76,27 @@ export class Lambda {
       entry: path.join(__dirname, "../lambda/function/user/deleteUser.ts"),
       vpc: this.vpc,
     });
+    this.deleteUserByIdLambda = new nodeLambda.NodejsFunction(
+      scope,
+      "deleteUserById",
+      {
+        bundling: {
+          externalModules: ["sqlite3"],
+        },
+        filesystem: lambda.FileSystem.fromEfsAccessPoint(
+          this.accessPoint,
+          MOUNT_PATH
+        ),
+        layers: [this.nodeLayer],
+        runtime: lambda.Runtime.NODEJS_16_X,
+        handler: "handler",
+        entry: path.join(
+          __dirname,
+          "../lambda/function/user/userId/deleteUserById.ts"
+        ),
+        vpc: this.vpc,
+      }
+    );
 
     this.postTravelRecordLambda = new nodeLambda.NodejsFunction(
       scope,
