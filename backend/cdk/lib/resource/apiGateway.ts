@@ -14,10 +14,14 @@ export class ApiGateway {
   private readonly postUserLambda: lambda.Function;
   private readonly deleteUserLambda: lambda.Function;
   private readonly deleteUserByIdLambda: lambda.Function;
+  private readonly getUserByIdLambda: lambda.Function;
   private readonly postTravelRecordLambda: lambda.Function;
   private readonly deleteTravelRecordLambda: lambda.Function;
+  private readonly deleteTravelRecordByIdLambda: lambda.Function;
   private readonly postTravelLambda: lambda.Function;
   private readonly deleteTravelLambda: lambda.Function;
+  private readonly deleteTravelByIdLambda: lambda.Function;
+  private readonly getTravelByIdLambda: lambda.Function;
 
   constructor(
     userPool: cognito.UserPool,
@@ -25,20 +29,28 @@ export class ApiGateway {
     postUserLambda: lambda.Function,
     deleteUserLambda: lambda.Function,
     deleteUserByIdLambda: lambda.Function,
+    getUserByIdLambda: lambda.Function,
     postTravelRecordLambda: lambda.Function,
     deleteTravelRecordLambda: lambda.Function,
+    deleteTravelRecordByIdLambda: lambda.Function,
     postTravelLambda: lambda.Function,
-    deleteTravelLambda: lambda.Function
+    deleteTravelLambda: lambda.Function,
+    deleteTravelByIdLambda: lambda.Function,
+    getTravelByIdLambda: lambda.Function
   ) {
     this.userPool = userPool;
     this.userPoolClient = userPoolClient;
     this.postUserLambda = postUserLambda;
     this.deleteUserLambda = deleteUserLambda;
     this.deleteUserByIdLambda = deleteUserByIdLambda;
+    this.getUserByIdLambda = getUserByIdLambda;
     this.postTravelRecordLambda = postTravelRecordLambda;
     this.deleteTravelRecordLambda = deleteTravelRecordLambda;
+    this.deleteTravelRecordByIdLambda = deleteTravelRecordByIdLambda;
     this.postTravelLambda = postTravelLambda;
     this.deleteTravelLambda = deleteTravelLambda;
+    this.deleteTravelByIdLambda = deleteTravelByIdLambda;
+    this.getTravelByIdLambda = getTravelByIdLambda;
   }
 
   public createResources(scope: Construct) {
@@ -95,6 +107,15 @@ export class ApiGateway {
       authorizer,
     });
     this.httpApi.addRoutes({
+      methods: [apigw.HttpMethod.GET],
+      path: "/user/{userId}",
+      integration: new intg.HttpLambdaIntegration(
+        "phoquashScenarioIntegration",
+        this.getUserByIdLambda
+      ),
+      authorizer,
+    });
+    this.httpApi.addRoutes({
       methods: [apigw.HttpMethod.POST],
       path: "/travelRecord",
       integration: new intg.HttpLambdaIntegration(
@@ -113,6 +134,15 @@ export class ApiGateway {
       authorizer,
     });
     this.httpApi.addRoutes({
+      methods: [apigw.HttpMethod.DELETE],
+      path: "/travelRecord/{travelRecordId}",
+      integration: new intg.HttpLambdaIntegration(
+        "phoquashScenarioIntegration",
+        this.deleteTravelRecordByIdLambda
+      ),
+      authorizer,
+    });
+    this.httpApi.addRoutes({
       methods: [apigw.HttpMethod.POST],
       path: "/travel",
       integration: new intg.HttpLambdaIntegration(
@@ -127,6 +157,24 @@ export class ApiGateway {
       integration: new intg.HttpLambdaIntegration(
         "phoquashScenarioIntegration",
         this.deleteTravelLambda
+      ),
+      authorizer,
+    });
+    this.httpApi.addRoutes({
+      methods: [apigw.HttpMethod.DELETE],
+      path: "/travel/{travelId}",
+      integration: new intg.HttpLambdaIntegration(
+        "phoquashScenarioIntegration",
+        this.deleteTravelByIdLambda
+      ),
+      authorizer,
+    });
+    this.httpApi.addRoutes({
+      methods: [apigw.HttpMethod.GET],
+      path: "/travel/{travelId}",
+      integration: new intg.HttpLambdaIntegration(
+        "phoquashScenarioIntegration",
+        this.getTravelByIdLambda
       ),
       authorizer,
     });

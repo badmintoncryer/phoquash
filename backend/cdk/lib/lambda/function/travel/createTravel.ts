@@ -1,4 +1,8 @@
-import { Context, APIGatewayProxyResult, APIGatewayProxyEventV2WithJWTAuthorizer } from "aws-lambda";
+import {
+  Context,
+  APIGatewayProxyResult,
+  APIGatewayProxyEventV2WithJWTAuthorizer,
+} from "aws-lambda";
 import sqlite3 = require("sqlite3");
 
 interface userIdType {
@@ -7,6 +11,9 @@ interface userIdType {
 
 interface travelRecordIdType {
   travelRecordId: number;
+}
+interface travelIdType {
+  travelId: number;
 }
 
 interface postTravelProps {
@@ -90,6 +97,7 @@ const postTravel = async (props: postTravelProps) => {
     return {
       status: "OK",
       message: "same travel is already registered",
+      travelId: registeredTravel.traveId,
     };
   }
 
@@ -102,6 +110,13 @@ const postTravel = async (props: postTravelProps) => {
     throw new Error("table error: " + error.message);
   });
 
+  const travelId: travelIdType = await get(
+    "SELECT travelId FROM travel WHERE userId = ? and travelRecordId = ?",
+    [userId.userId, travelRecordId.travelRecordId]
+  ).catch((error) => {
+    throw new Error("table error: " + error.message)
+  });
+
   await close().catch((error) => {
     throw new Error("table error: " + error.message);
   });
@@ -109,6 +124,7 @@ const postTravel = async (props: postTravelProps) => {
   return {
     status: "OK",
     message: "travel is successfully registered",
+    travelId: travelId.travelId,
   };
 };
 

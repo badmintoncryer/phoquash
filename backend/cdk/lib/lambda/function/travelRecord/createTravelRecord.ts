@@ -1,4 +1,8 @@
-import { Context, APIGatewayProxyResult, APIGatewayProxyEventV2WithJWTAuthorizer } from "aws-lambda";
+import {
+  Context,
+  APIGatewayProxyResult,
+  APIGatewayProxyEventV2WithJWTAuthorizer,
+} from "aws-lambda";
 import sqlite3 = require("sqlite3");
 
 interface userIdType {
@@ -11,7 +15,7 @@ interface postTravelRecordProps {
   startDate: number;
   endDate: number;
 }
-const postTravelRecord = async (props: postTravelRecordProps) => {
+const createTravelRecord = async (props: postTravelRecordProps) => {
   const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");
   // const db = new sqlite3.Database(
   //   "/Users/cryershinozukakazuho/git/phoquash/backend/cdk/phoquash.sqlite3"
@@ -85,6 +89,14 @@ const postTravelRecord = async (props: postTravelRecordProps) => {
     throw new Error("table error: " + error.message);
   });
 
+  const travelRecord = await get(
+    "SELECT travelRecordId FROM travelRecord WHERE title = ? AND start = ? AND END = ? AND userId = ?",
+    [props.title, props.startDate, props.endDate, userId.userId]
+  ).catch((error) => {
+    console.log(error);
+    throw new Error("table error: " + error.message);
+  });
+
   await close().catch((error) => {
     throw new Error("table error: " + error.message);
   });
@@ -92,6 +104,7 @@ const postTravelRecord = async (props: postTravelRecordProps) => {
   return {
     status: "OK",
     message: "Successfully registered travelRecord",
+    travelRecordId: travelRecord.travelRecordId,
   };
 };
 
@@ -180,7 +193,7 @@ exports.handler = async (
   let status = 200;
   let response = {};
   try {
-    response = await postTravelRecord({
+    response = await createTravelRecord({
       userName: userName,
       title: title,
       startDate: Number(startDate),

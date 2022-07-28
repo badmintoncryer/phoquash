@@ -12,10 +12,14 @@ export class Lambda {
   public postUserLambda: lambda.Function;
   public deleteUserLambda: lambda.Function;
   public deleteUserByIdLambda: lambda.Function;
+  public getUserByIdLambda: lambda.Function;
   public postTravelRecordLambda: lambda.Function;
   public deleteTravelRecordLambda: lambda.Function;
+  public deleteTravelRecordByIdLambda: lambda.Function;
   public postTravelLambda: lambda.Function;
   public deleteTravelLambda: lambda.Function;
+  public deleteTravelByIdLambda: lambda.Function;
+  public getTravelByIdLambda: lambda.Function;
   public nodeLayer: lambda.LayerVersion;
   private readonly accessPoint: efs.AccessPoint;
   private readonly vpc: ec2.Vpc;
@@ -97,6 +101,27 @@ export class Lambda {
         vpc: this.vpc,
       }
     );
+    this.getUserByIdLambda = new nodeLambda.NodejsFunction(
+      scope,
+      "getUserById",
+      {
+        bundling: {
+          externalModules: ["sqlite3"],
+        },
+        filesystem: lambda.FileSystem.fromEfsAccessPoint(
+          this.accessPoint,
+          MOUNT_PATH
+        ),
+        layers: [this.nodeLayer],
+        runtime: lambda.Runtime.NODEJS_16_X,
+        handler: "handler",
+        entry: path.join(
+          __dirname,
+          "../lambda/function/user/userId/getUserById.ts"
+        ),
+        vpc: this.vpc,
+      }
+    );
 
     this.postTravelRecordLambda = new nodeLambda.NodejsFunction(
       scope,
@@ -140,6 +165,27 @@ export class Lambda {
         vpc: this.vpc,
       }
     );
+    this.deleteTravelRecordByIdLambda = new nodeLambda.NodejsFunction(
+      scope,
+      "deleteTravelRecordByIdLambda",
+      {
+        bundling: {
+          externalModules: ["sqlite3"],
+        },
+        filesystem: lambda.FileSystem.fromEfsAccessPoint(
+          this.accessPoint,
+          MOUNT_PATH
+        ),
+        layers: [this.nodeLayer],
+        runtime: lambda.Runtime.NODEJS_16_X,
+        handler: "handler",
+        entry: path.join(
+          __dirname,
+          "../lambda/function/travelRecord/travelRecordId/deleteTravelRecordById.ts"
+        ),
+        vpc: this.vpc,
+      }
+    );
 
     this.postTravelLambda = new nodeLambda.NodejsFunction(
       scope,
@@ -179,6 +225,48 @@ export class Lambda {
         entry: path.join(
           __dirname,
           "../lambda/function/travel/deleteTravel.ts"
+        ),
+        vpc: this.vpc,
+      }
+    );
+    this.deleteTravelByIdLambda = new nodeLambda.NodejsFunction(
+      scope,
+      "deleteTravelByIdLambda",
+      {
+        bundling: {
+          externalModules: ["sqlite3"],
+        },
+        filesystem: lambda.FileSystem.fromEfsAccessPoint(
+          this.accessPoint,
+          MOUNT_PATH
+        ),
+        layers: [this.nodeLayer],
+        runtime: lambda.Runtime.NODEJS_16_X,
+        handler: "handler",
+        entry: path.join(
+          __dirname,
+          "../lambda/function/travel/travelId/deleteTravelById.ts"
+        ),
+        vpc: this.vpc,
+      }
+    );
+    this.getTravelByIdLambda = new nodeLambda.NodejsFunction(
+      scope,
+      "getTravelByIdLambda",
+      {
+        bundling: {
+          externalModules: ["sqlite3"],
+        },
+        filesystem: lambda.FileSystem.fromEfsAccessPoint(
+          this.accessPoint,
+          MOUNT_PATH
+        ),
+        layers: [this.nodeLayer],
+        runtime: lambda.Runtime.NODEJS_16_X,
+        handler: "handler",
+        entry: path.join(
+          __dirname,
+          "../lambda/function/travel/travelId/getTravelById.ts"
         ),
         vpc: this.vpc,
       }

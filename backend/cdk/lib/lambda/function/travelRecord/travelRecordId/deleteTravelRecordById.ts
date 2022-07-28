@@ -5,17 +5,18 @@ import {
 } from "aws-lambda";
 import sqlite3 = require("sqlite3");
 
-interface userIdType {
-  userId: number;
+interface deleteTravelRecordIdProps {
+travelRecordId: string,
 }
-
-const deleteUser = async (userId: string) => {
+const deleteTravelRecordById = async (props: deleteTravelRecordIdProps) => {
   const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");
-  // const db = new sqlite3.Database("/Users/cryershinozukakazuho/git/phoquash/backend/cdk/phoquash.sqlite3");
+  // const db = new sqlite3.Database(
+  //   "/Users/cryershinozukakazuho/git/phoquash/backend/cdk/phoquash.sqlite3"
+  // );
 
-  const get = (sql: string, params: string[]): Promise<userIdType> => {
+  const get = (sql: string, params: (string | number)[]): Promise<any> => {
     return new Promise((resolve, reject) => {
-      db.get(sql, params, (error: any, row: userIdType) => {
+      db.get(sql, params, (error: any, row: any) => {
         if (error) {
           reject(error);
         }
@@ -44,15 +45,20 @@ const deleteUser = async (userId: string) => {
     });
   };
 
-  await run("DELETE FROM user WHERE userId = ?", userId).catch((error) => {
+  await run("DELETE FROM travelRecord WHERE travelRecordId = ?", [
+    props.travelRecordId,
+  ]).catch((error) => {
+    console.log(error);
     throw new Error("table error: " + error.message);
   });
+
   await close().catch((error) => {
     throw new Error("table error: " + error.message);
   });
+
   return {
     status: "OK",
-    message: "user is successfully deleted",
+    message: "travelRecord is successfully deleted",
   };
 };
 
@@ -66,30 +72,31 @@ exports.handler = async (
   _context: Context
 ): Promise<APIGatewayProxyResult> => {
   // eventが空の場合早期return
-  if (!event || !event.body) {
+  if (!event || !event.body || !event.headers || !event.headers.authorization) {
     return {
       statusCode: 500,
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
       },
-      body: JSON.stringify({
-        status: "NG",
-        message: "event format is invalid",
-      }),
+      body: JSON.stringify({}),
     };
   }
 
   const apiPath = getApiPath(event);
   // API Pathの最後の要素をpathParameterとして取得
-  const userId = apiPath.split("/").slice(-1)[0];
+  const travelRecordId = apiPath.split("/").slice(-1)[0];
 
   let status = 200;
-  const response = await deleteUser(userId).catch((error) => {
+  let response = {};
+  try {
+    response = await deleteTravelRecordById({
+      travelRecordId: travelRecordId,
+    });
+  } catch (error) {
     console.log(error);
     status = 500;
-  });
-
+  }
   return {
     statusCode: status,
     headers: {

@@ -5,24 +5,15 @@ import {
 } from "aws-lambda";
 import sqlite3 = require("sqlite3");
 
-interface userIdType {
-  userId: number;
+interface deleteTravelProps {
+  travelId: string;
 }
-
-const deleteUser = async (userId: string) => {
+const deleteTravelById = async (props: deleteTravelProps) => {
   const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");
-  // const db = new sqlite3.Database("/Users/cryershinozukakazuho/git/phoquash/backend/cdk/phoquash.sqlite3");
+  // const db = new sqlite3.Database(
+  //   "/Users/cryershinozukakazuho/git/phoquash/backend/cdk/phoquash.sqlite3"
+  // );
 
-  const get = (sql: string, params: string[]): Promise<userIdType> => {
-    return new Promise((resolve, reject) => {
-      db.get(sql, params, (error: any, row: userIdType) => {
-        if (error) {
-          reject(error);
-        }
-        resolve(row);
-      });
-    });
-  };
   const run = (sql: string, ...params: any) => {
     return new Promise<void>((resolve, reject) => {
       db.run(sql, params, (error: any) => {
@@ -44,15 +35,20 @@ const deleteUser = async (userId: string) => {
     });
   };
 
-  await run("DELETE FROM user WHERE userId = ?", userId).catch((error) => {
-    throw new Error("table error: " + error.message);
-  });
+  await run("DELETE FROM travel WHERE travelId = ?", [props.travelId]).catch(
+    (error) => {
+      console.log(error);
+      throw new Error("table error: " + error.message);
+    }
+  );
+
   await close().catch((error) => {
     throw new Error("table error: " + error.message);
   });
+
   return {
     status: "OK",
-    message: "user is successfully deleted",
+    message: "travel is successfully deleted",
   };
 };
 
@@ -65,8 +61,9 @@ exports.handler = async (
   event: APIGatewayProxyEventV2WithJWTAuthorizer,
   _context: Context
 ): Promise<APIGatewayProxyResult> => {
+  console.log({ event });
   // eventが空の場合早期return
-  if (!event || !event.body) {
+  if (!event || !event.body || !event.headers || !event.headers.authorization) {
     return {
       statusCode: 500,
       headers: {
@@ -82,14 +79,18 @@ exports.handler = async (
 
   const apiPath = getApiPath(event);
   // API Pathの最後の要素をpathParameterとして取得
-  const userId = apiPath.split("/").slice(-1)[0];
+  const travelId = apiPath.split("/").slice(-1)[0];
 
   let status = 200;
-  const response = await deleteUser(userId).catch((error) => {
+  let response = {};
+  try {
+    response = await deleteTravelById({
+      travelId: travelId,
+    });
+  } catch (error) {
     console.log(error);
     status = 500;
-  });
-
+  }
   return {
     statusCode: status,
     headers: {

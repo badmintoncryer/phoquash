@@ -5,31 +5,28 @@ import {
 } from "aws-lambda";
 import sqlite3 = require("sqlite3");
 
-interface userIdType {
-  userId: number;
+interface getTravelProps {
+  travelId: string;
+}
+interface travelType {
+  travelId: string,
+  userId: string,
+  travelRecordId: string,
 }
 
-const deleteUser = async (userId: string) => {
+const getTravelById = async (props: getTravelProps) => {
   const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");
-  // const db = new sqlite3.Database("/Users/cryershinozukakazuho/git/phoquash/backend/cdk/phoquash.sqlite3");
+  // const db = new sqlite3.Database(
+  //   "/Users/cryershinozukakazuho/git/phoquash/backend/cdk/phoquash.sqlite3"
+  // );
 
-  const get = (sql: string, params: string[]): Promise<userIdType> => {
+    const get = (sql: string, params: string[]): Promise<travelType> => {
     return new Promise((resolve, reject) => {
-      db.get(sql, params, (error: any, row: userIdType) => {
+      db.get(sql, params, (error: any, row: travelType) => {
         if (error) {
           reject(error);
         }
         resolve(row);
-      });
-    });
-  };
-  const run = (sql: string, ...params: any) => {
-    return new Promise<void>((resolve, reject) => {
-      db.run(sql, params, (error: any) => {
-        if (error) {
-          reject(error);
-        }
-        resolve();
       });
     });
   };
@@ -44,15 +41,23 @@ const deleteUser = async (userId: string) => {
     });
   };
 
-  await run("DELETE FROM user WHERE userId = ?", userId).catch((error) => {
-    throw new Error("table error: " + error.message);
-  });
+  const travel: travelType = await get("SELECT * FROM travel WHERE travelId = ?", [props.travelId]).catch(
+    (error) => {
+      console.log(error);
+      throw new Error("table error: " + error.message);
+    }
+  );
+
   await close().catch((error) => {
     throw new Error("table error: " + error.message);
   });
+
   return {
     status: "OK",
-    message: "user is successfully deleted",
+    message: "travel is successfully deleted",
+    travelId: props.travelId,
+    userId: travel.userId,
+    travelRecordId: travel.travelRecordId,
   };
 };
 
@@ -65,8 +70,9 @@ exports.handler = async (
   event: APIGatewayProxyEventV2WithJWTAuthorizer,
   _context: Context
 ): Promise<APIGatewayProxyResult> => {
+  console.log({ event });
   // eventが空の場合早期return
-  if (!event || !event.body) {
+  if (!event || !event.body || !event.headers || !event.headers.authorization) {
     return {
       statusCode: 500,
       headers: {
@@ -82,14 +88,18 @@ exports.handler = async (
 
   const apiPath = getApiPath(event);
   // API Pathの最後の要素をpathParameterとして取得
-  const userId = apiPath.split("/").slice(-1)[0];
+  const travelId = apiPath.split("/").slice(-1)[0];
 
   let status = 200;
-  const response = await deleteUser(userId).catch((error) => {
+  let response = {};
+  try {
+    response = await getTravelById({
+      travelId: travelId,
+    });
+  } catch (error) {
     console.log(error);
     status = 500;
-  });
-
+  }
   return {
     statusCode: status,
     headers: {

@@ -30,10 +30,14 @@ export class CdkStack extends Stack {
       lambda.postUserLambda,
       lambda.deleteUserLambda,
       lambda.deleteUserByIdLambda,
+      lambda.getUserByIdLambda,
       lambda.postTravelRecordLambda,
       lambda.deleteTravelRecordLambda,
+      lambda.deleteTravelRecordByIdLambda,
       lambda.postTravelLambda,
       lambda.deleteTravelLambda,
+      lambda.deleteTravelByIdLambda,
+      lambda.getTravelByIdLambda
     );
     apigw.createResources(this);
   }
