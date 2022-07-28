@@ -20,6 +20,7 @@ export class Lambda {
   public deleteTravelLambda: lambda.Function;
   public deleteTravelByIdLambda: lambda.Function;
   public getTravelByIdLambda: lambda.Function;
+  public postPhotoLambda: lambda.Function;
   public nodeLayer: lambda.LayerVersion;
   private readonly accessPoint: efs.AccessPoint;
   private readonly vpc: ec2.Vpc;
@@ -267,6 +268,27 @@ export class Lambda {
         entry: path.join(
           __dirname,
           "../lambda/function/travel/travelId/getTravelById.ts"
+        ),
+        vpc: this.vpc,
+      }
+    );
+    this.postPhotoLambda = new nodeLambda.NodejsFunction(
+      scope,
+      "postPhotoLambda",
+      {
+        bundling: {
+          externalModules: ["sqlite3"],
+        },
+        filesystem: lambda.FileSystem.fromEfsAccessPoint(
+          this.accessPoint,
+          MOUNT_PATH
+        ),
+        layers: [this.nodeLayer],
+        runtime: lambda.Runtime.NODEJS_16_X,
+        handler: "handler",
+        entry: path.join(
+          __dirname,
+          "../lambda/function/photo/createPhoto.ts"
         ),
         vpc: this.vpc,
       }

@@ -6,7 +6,6 @@ import { Vpc } from "./resource/vpc";
 import { Lambda } from "./resource/lambda";
 import { ApiGateway } from "./resource/apiGateway";
 
-// import * as cognito from "aws-cdk-lib/aws-cognito";
 
 export class CdkStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -37,7 +36,8 @@ export class CdkStack extends Stack {
       lambda.postTravelLambda,
       lambda.deleteTravelLambda,
       lambda.deleteTravelByIdLambda,
-      lambda.getTravelByIdLambda
+      lambda.getTravelByIdLambda,
+      lambda.postPhotoLambda,
     );
     apigw.createResources(this);
   }

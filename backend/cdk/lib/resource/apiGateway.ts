@@ -22,6 +22,7 @@ export class ApiGateway {
   private readonly deleteTravelLambda: lambda.Function;
   private readonly deleteTravelByIdLambda: lambda.Function;
   private readonly getTravelByIdLambda: lambda.Function;
+  private readonly postPhotoLambda: lambda.Function;
 
   constructor(
     userPool: cognito.UserPool,
@@ -36,7 +37,8 @@ export class ApiGateway {
     postTravelLambda: lambda.Function,
     deleteTravelLambda: lambda.Function,
     deleteTravelByIdLambda: lambda.Function,
-    getTravelByIdLambda: lambda.Function
+    getTravelByIdLambda: lambda.Function,
+    postPhotoLambda: lambda.Function
   ) {
     this.userPool = userPool;
     this.userPoolClient = userPoolClient;
@@ -51,6 +53,7 @@ export class ApiGateway {
     this.deleteTravelLambda = deleteTravelLambda;
     this.deleteTravelByIdLambda = deleteTravelByIdLambda;
     this.getTravelByIdLambda = getTravelByIdLambda;
+    this.postPhotoLambda = postPhotoLambda;
   }
 
   public createResources(scope: Construct) {
@@ -175,6 +178,15 @@ export class ApiGateway {
       integration: new intg.HttpLambdaIntegration(
         "phoquashScenarioIntegration",
         this.getTravelByIdLambda
+      ),
+      authorizer,
+    });
+    this.httpApi.addRoutes({
+      methods: [apigw.HttpMethod.POST],
+      path: "/photo",
+      integration: new intg.HttpLambdaIntegration(
+        "phoquashScenarioIntegration",
+        this.postPhotoLambda
       ),
       authorizer,
     });
