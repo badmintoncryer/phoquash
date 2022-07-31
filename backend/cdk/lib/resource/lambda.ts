@@ -21,6 +21,7 @@ export class Lambda {
   public deleteTravelByIdLambda: lambda.Function;
   public getTravelByIdLambda: lambda.Function;
   public postPhotoLambda: lambda.Function;
+  public uploadPhotoDataLambda: lambda.Function;
   public nodeLayer: lambda.LayerVersion;
   private readonly accessPoint: efs.AccessPoint;
   private readonly vpc: ec2.Vpc;
@@ -286,11 +287,26 @@ export class Lambda {
         layers: [this.nodeLayer],
         runtime: lambda.Runtime.NODEJS_16_X,
         handler: "handler",
+        entry: path.join(__dirname, "../lambda/function/photo/createPhoto.ts"),
+        vpc: this.vpc,
+      }
+    );
+    this.uploadPhotoDataLambda = new nodeLambda.NodejsFunction(
+      scope,
+      "uploadPhotoLambda",
+      {
+        bundling: {
+          externalModules: ["sqlite3"],
+        },
+        runtime: lambda.Runtime.NODEJS_16_X,
+        handler: "handler",
         entry: path.join(
           __dirname,
-          "../lambda/function/photo/createPhoto.ts"
+          "../lambda/function/photoData/uploadPhotoData.ts"
         ),
-        vpc: this.vpc,
+        environment: {
+          BUCKET_NAME: "phoquash-photo-data-bucket",
+        },
       }
     );
   }

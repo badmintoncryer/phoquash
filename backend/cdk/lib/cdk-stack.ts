@@ -5,6 +5,7 @@ import { Efs } from "./resource/efs";
 import { Vpc } from "./resource/vpc";
 import { Lambda } from "./resource/lambda";
 import { ApiGateway } from "./resource/apiGateway";
+import { S3 } from "./resource/s3";
 
 
 export class CdkStack extends Stack {
@@ -19,6 +20,9 @@ export class CdkStack extends Stack {
 
     const lambda = new Lambda(efs.accessPoint, vpc.vpc);
     lambda.createResources(this);
+
+    const s3 = new S3(lambda.uploadPhotoDataLambda)
+    s3.createResources(this)
 
     const cognito = new Cognito();
     cognito.createResources(this);
