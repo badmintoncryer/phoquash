@@ -9,6 +9,8 @@
 ### 手順
 1. openapi.yamlの作成
    1. [openAPI3.0形式](https://swagger.io/specification/)に則って作成する。
+      1. tags, OperationIdも適切に設定し、自動生成時のAPI class, 関数名をいい感じにする。
+      2. 参考URLは[こちら](https://zenn.dev/offers/articles/20220620-openapi-generator)
    2. API Gatewayから既存APIのエクスポートが可能。原型はここから作るのがおすすめ。
       1. 公式マニュアルは[こちら](https://docs.aws.amazon.com/ja_jp/apigateway/latest/developerguide/api-gateway-export-api.html)
       2. パラメータ群までは読み取ってくれないため、手動で修正が必要。いい感じの方法を模索してみる。
