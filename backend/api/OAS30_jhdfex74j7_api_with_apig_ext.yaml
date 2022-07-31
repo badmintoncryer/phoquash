@@ -1,0 +1,211 @@
+openapi: "3.0.1"
+info:
+  title: "phoquashApi"
+  version: "2022-07-29 08:18:09UTC"
+servers:
+- url: "https://jhdfex74j7.execute-api.ap-northeast-1.amazonaws.com/{basePath}"
+  variables:
+    basePath:
+      default: "api"
+tags:
+- name: "aws:cloudformation:stack-id"
+  x-amazon-apigateway-tag-value: "arn:aws:cloudformation:ap-northeast-1:214794239830:stack/PhoquashCdkStack/2f2285f0-f53b-11ec-8ad4-0ecb8f7e60e7"
+- name: "aws:cloudformation:stack-name"
+  x-amazon-apigateway-tag-value: "PhoquashCdkStack"
+- name: "aws:cloudformation:logical-id"
+  x-amazon-apigateway-tag-value: "phoquashApi085B94DC"
+paths:
+  /travel:
+    post:
+      responses:
+        default:
+          description: "Default response for POST /travel"
+      security:
+      - PhoquashCognitoAuthorizer: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:214794239830:function:PhoquashCdkStack-postTravelLambdaE47B979B-sFQO7I0kt7Z7/invocations"
+        connectionType: "INTERNET"
+    delete:
+      responses:
+        default:
+          description: "Default response for DELETE /travel"
+      security:
+      - PhoquashCognitoAuthorizer: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:214794239830:function:PhoquashCdkStack-deleteTravelLambda21D406BD-zCd1SZlKl90t/invocations"
+        connectionType: "INTERNET"
+  /travel/{travelId}:
+    get:
+      responses:
+        default:
+          description: "Default response for GET /travel/{travelId}"
+      security:
+      - PhoquashCognitoAuthorizer: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:214794239830:function:PhoquashCdkStack-getTravelByIdLambda1B9803B4-Exh9V7MRLj3r/invocations"
+        connectionType: "INTERNET"
+    delete:
+      responses:
+        default:
+          description: "Default response for DELETE /travel/{travelId}"
+      security:
+      - PhoquashCognitoAuthorizer: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:214794239830:function:PhoquashCdkStack-deleteTravelByIdLambda71C6AE27-mzABbFaYSOIn/invocations"
+        connectionType: "INTERNET"
+    parameters:
+    - name: "travelId"
+      in: "path"
+      description: "Generated path parameter for travelId"
+      required: true
+      schema:
+        type: "string"
+  /travelRecord:
+    post:
+      responses:
+        default:
+          description: "Default response for POST /travelRecord"
+      security:
+      - PhoquashCognitoAuthorizer: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:214794239830:function:PhoquashCdkStack-postTravelRecordLambda0A593D45-4KbQStIi38Tz/invocations"
+        connectionType: "INTERNET"
+    delete:
+      responses:
+        default:
+          description: "Default response for DELETE /travelRecord"
+      security:
+      - PhoquashCognitoAuthorizer: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:214794239830:function:PhoquashCdkStack-deleteTravelRecordLambdaDAEB7EBD-0FyD7FqYrEdS/invocations"
+        connectionType: "INTERNET"
+  /travelRecord/{travelRecordId}:
+    delete:
+      responses:
+        default:
+          description: "Default response for DELETE /travelRecord/{travelRecordId}"
+      security:
+      - PhoquashCognitoAuthorizer: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:214794239830:function:PhoquashCdkStack-deleteTravelRecordByIdLambda39F1F-XmBuimY5Onb5/invocations"
+        connectionType: "INTERNET"
+    parameters:
+    - name: "travelRecordId"
+      in: "path"
+      description: "Generated path parameter for travelRecordId"
+      required: true
+      schema:
+        type: "string"
+  /user:
+    post:
+      responses:
+        default:
+          description: "Default response for POST /user"
+      security:
+      - PhoquashCognitoAuthorizer: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:214794239830:function:PhoquashCdkStack-postUser7BA52173-RfbzlgJLC3p8/invocations"
+        connectionType: "INTERNET"
+    delete:
+      responses:
+        default:
+          description: "Default response for DELETE /user"
+      security:
+      - PhoquashCognitoAuthorizer: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:214794239830:function:PhoquashCdkStack-deleteUser3C560078-IcmxJnMJ27dO/invocations"
+        connectionType: "INTERNET"
+  /user/{userId}:
+    get:
+      responses:
+        default:
+          description: "Default response for GET /user/{userId}"
+      security:
+      - PhoquashCognitoAuthorizer: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:214794239830:function:PhoquashCdkStack-getUserById3F5C9914-c7qJizZYAHvI/invocations"
+        connectionType: "INTERNET"
+    delete:
+      responses:
+        default:
+          description: "Default response for DELETE /user/{userId}"
+      security:
+      - PhoquashCognitoAuthorizer: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:214794239830:function:PhoquashCdkStack-deleteUserByIdEF6B9B71-SdwwzaJYaUvg/invocations"
+        connectionType: "INTERNET"
+    parameters:
+    - name: "userId"
+      in: "path"
+      description: "Generated path parameter for userId"
+      required: true
+      schema:
+        type: "string"
+  /photo:
+    post:
+      responses:
+        default:
+          description: "Default response for POST /photo"
+      security:
+      - PhoquashCognitoAuthorizer: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:ap-northeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-northeast-1:214794239830:function:PhoquashCdkStack-postPhotoLambda3028AE90-Wr7e9wgkWbvX/invocations"
+        connectionType: "INTERNET"
+components:
+  securitySchemes:
+    PhoquashCognitoAuthorizer:
+      type: "oauth2"
+      flows: {}
+      x-amazon-apigateway-authorizer:
+        identitySource: "$request.header.Authorization"
+        jwtConfiguration:
+          audience:
+          - "33bdktfof0qfasac3b8sna48lh"
+          issuer: "https://cognito-idp.ap-northeast-1.amazonaws.com/ap-northeast-1_8qJE5TWwo"
+        type: "jwt"
+x-amazon-apigateway-cors:
+  allowMethods:
+  - "*"
+  allowHeaders:
+  - "authorization"
+  maxAge: -42
+  allowCredentials: false
+  allowOrigins:
+  - "*"
+x-amazon-apigateway-importexport-version: "1.0"
