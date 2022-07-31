@@ -36,12 +36,24 @@
     "test": "react-scripts test --coverage --watchAll=false && jest-coverage-badges",
     "eject": "react-scripts eject",
     "prepare": "cd .. && husky install frontend/.husky",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "storybook": "start-storybook -p 6006 -s public",
+    "build-storybook": "build-storybook -s public"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
       "react-app/jest"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "import/no-anonymous-default-export": "off"
+        }
+      }
     ]
   },
   "browserslist": {
@@ -73,12 +85,29 @@
     "@babel/preset-env": "^7.18.2",
     "@babel/preset-react": "^7.17.12",
     "@babel/preset-typescript": "^7.17.12",
+    "@storybook/addon-actions": "^6.5.9",
+    "@storybook/addon-console": "^1.2.3",
+    "@storybook/addon-essentials": "^6.5.9",
+    "@storybook/addon-info": "^5.3.21",
+    "@storybook/addon-interactions": "^6.5.9",
+    "@storybook/addon-knobs": "^6.4.0",
+    "@storybook/addon-links": "^6.5.9",
+    "@storybook/addon-storyshots": "^6.5.9",
+    "@storybook/builder-webpack5": "^6.5.9",
+    "@storybook/manager-webpack5": "^6.5.9",
+    "@storybook/node-logger": "^6.5.9",
+    "@storybook/preset-create-react-app": "^4.1.2",
+    "@storybook/react": "^6.5.9",
+    "@storybook/testing-library": "^0.0.13",
     "@tsconfig/recommended": "^1.0.1",
+    "babel-plugin-named-exports-order": "^0.0.2",
     "husky": "^8.0.1",
     "jest": "^28.1.0",
     "jest-coverage-badges": "^1.1.2",
     "lint-staged": "^12.4.2",
     "prettier": "^2.6.2",
-    "react-test-renderer": "^18.1.0"
+    "prop-types": "^15.8.1",
+    "react-test-renderer": "^18.1.0",
+    "webpack": "^5.74.0"
   }
 }
