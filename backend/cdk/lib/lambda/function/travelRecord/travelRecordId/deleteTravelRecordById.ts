@@ -6,7 +6,7 @@ import {
 import sqlite3 = require("sqlite3");
 
 interface deleteTravelRecordIdProps {
-travelRecordId: string,
+  travelRecordId: string;
 }
 const deleteTravelRecordById = async (props: deleteTravelRecordIdProps) => {
   const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");

@@ -54,7 +54,7 @@ const getTravelById = async (props: getTravelProps) => {
 
   return {
     status: "OK",
-    message: "travel is successfully deleted",
+    message: "travel is successfully selected",
     travelId: props.travelId,
     userId: travel.userId,
     travelRecordId: travel.travelRecordId,

@@ -55,7 +55,7 @@ const getUserById = async (userId: string) => {
   });
   return {
     status: "OK",
-    message: "user is successfully deleted",
+    message: "user is successfully selected",
     userId: user.userId,
     userName: user.userName,
   };
