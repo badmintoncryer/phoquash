@@ -9,8 +9,8 @@ import AppBar from "components/uiParts/appBar/AppBar";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 export type MainProps = {
-  signOut: ((data?: AuthEventData | undefined) => void) | undefined;
-  user: CognitoUserAmplify | undefined;
+  signOut?: (data?: AuthEventData | undefined) => void;
+  user?: CognitoUserAmplify;
 };
 
 export const Main = (props: MainProps) => {

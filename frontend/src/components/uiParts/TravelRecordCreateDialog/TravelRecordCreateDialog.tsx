@@ -11,14 +11,7 @@ import {
   ImageListItem,
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
-import {
-  forwardRef,
-  ReactElement,
-  Ref,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { forwardRef, ReactElement, Ref, useCallback, useState } from "react";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import ImageUploading, { ImageType } from "react-images-uploading";
