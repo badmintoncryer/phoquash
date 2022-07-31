@@ -30,6 +30,7 @@ paths:
               endDate: 1659360770000
       responses:
         200:
+          description: travel登録成功時のレスポンス
           content:
             application/json:
               schema:
@@ -62,6 +63,7 @@ paths:
               endDate: 1659360770000
       responses:
         200:
+          description: travel削除成功時のレスポンス
           content:
             application/json:
               schema:
@@ -84,6 +86,7 @@ paths:
       summary: travelIdを元にしたtravelの取得
       responses:
         200:
+          description: travel取得成功時のレスポンス
           content:
             application/json:
               schema:
@@ -108,6 +111,7 @@ paths:
       summary: travelIdを元にしたtravelの削除
       responses:
         200:
+          description: travel削除成功時のレスポンス
           content:
             application/json:
               schema:
@@ -147,6 +151,7 @@ paths:
               endDate: 1659360770000
       responses:
         200:
+          description: travelRecord登録成功時のレスポンス
           content:
             application/json:
               schema:
@@ -179,6 +184,7 @@ paths:
               endDate: 1659360770000
       responses:
         200:
+          description: travelRecord削除成功時のレスポンス
           content:
             application/json:
               schema:
@@ -201,6 +207,7 @@ paths:
       summary: travelRecordIdを元にしたTravelRecordの削除
       responses:
         200:
+          description: travelRecord削除成功時のレスポンス
           content:
             application/json:
               schema:
@@ -232,6 +239,7 @@ paths:
       summary: userの登録
       responses:
         200:
+          description: user登録成功時のレスポンス
           content:
             application/json:
               schema:
@@ -254,6 +262,7 @@ paths:
       summary: userの削除
       responses:
         200:
+          description: user削除成功時のレスポンス
           content:
             application/json:
               schema:
@@ -278,6 +287,7 @@ paths:
       summary: userIdを元にしたuserの取得
       responses:
         200:
+          description: user取得成功時のレスポンス
           content:
             application/json:
               schema:
@@ -301,6 +311,7 @@ paths:
       summary: userの削除
       responses:
         200:
+          description: user削除成功時のレスポンス
           content:
             application/json:
               schema:
@@ -341,6 +352,7 @@ paths:
               isFavorite: true
       responses:
         200:
+          description: photo登録成功時のレスポンス
           content:
             application/json:
               schema:
@@ -379,7 +391,7 @@ components:
         - title
         - startDate
         - endDate
-      prpperties:
+      properties:
         userName:
           type: string
         title:
@@ -395,7 +407,7 @@ components:
       required:
         - status
         - message
-      prpperties:
+      properties:
         status:
           type: string
         message:
@@ -408,7 +420,7 @@ components:
       required:
         - status
         - message
-      prpperties:
+      properties:
         status:
           type: string
         message:
