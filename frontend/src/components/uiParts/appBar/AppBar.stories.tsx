@@ -4,7 +4,7 @@ import AppBar from "./AppBar";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: "Example/AppBar",
+  title: "UiParts/AppBar",
   component: AppBar,
 } as ComponentMeta<typeof AppBar>;
 

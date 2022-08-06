@@ -4,7 +4,7 @@ import { BottomRightFab } from "./BottomRightFab";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: "Example/BottomRightFab",
+  title: "UiParts/BottomRightFab",
   component: BottomRightFab,
 } as ComponentMeta<typeof BottomRightFab>;
 

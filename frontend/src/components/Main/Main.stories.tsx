@@ -3,7 +3,7 @@ import { Main } from "./Main";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: "Example/Main",
+  title: "Main/Main",
   component: Main,
 } as ComponentMeta<typeof Main>;
 

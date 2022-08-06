@@ -3,7 +3,7 @@ import { TravelRecordCard } from "./TravelRecordCard";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: "Example/TravelRecordCard",
+  title: "UiParts/TravelRecordCard",
   component: TravelRecordCard,
 } as ComponentMeta<typeof TravelRecordCard>;
 
