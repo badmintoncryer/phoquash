@@ -436,7 +436,7 @@ components:
           type: integer
           format: int64
         endDate:
-          type: interger
+          type: integer
           format: int64
     postTravelReturn:
       type: object
