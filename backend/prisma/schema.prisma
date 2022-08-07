@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId Int @id @default(autoincrement())
+  userName String
+  Travels Travel[]
+}
+
+model TravelRecord {
+  travelRecordId Int @id @default(autoincrement())
+  title String
+  start Int
+  end Int
+  Travels Travel[]
+  Photos Photo[]
+}
+
+model Travel {
+  travelId Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [userId])
+  userId Int
+  travelRecord TravelRecord @relation(fields: [travelRecordId], references: [travelRecordId])
+  travelRecordId Int
+}
+
+model Photo {
+  photoId Int @id @default(autoincrement())
+  description String?
+  fileName String
+  filePath String
+  isFavorite Boolean
+  travelRecord TravelRecord @relation(fields: [travelRecordId], references: [travelRecordId])
+  travelRecordId Int
+}
+
