@@ -23,7 +23,7 @@ const getBodyParameter = (event: APIGatewayProxyEventV2WithJWTAuthorizer) => {
   const bodyList = decodedEventBody.split("&").map((keyValue) => {
     const key = keyValue.split("=")[0];
     const value = keyValue.split("=")[1];
-    return { key: key, value: value };
+    return { key, value };
   });
 
   return bodyList;
@@ -35,14 +35,14 @@ exports.handler = async (
 ): Promise<APIGatewayProxyResult> => {
   const bodyList = getBodyParameter(event);
   const travelRecordId: string = bodyList.filter((element) => {
-    return element["key"] === "travelRecordId";
-  })[0]["value"];
+    return element.key === "travelRecordId";
+  })[0].value;
   const fileName: string = bodyList.filter((element) => {
-    return element["key"] === "fileName";
-  })[0]["value"];
+    return element.key === "fileName";
+  })[0].value;
   const photoData: string = bodyList.filter((element) => {
-    return element["key"] === "photoData";
-  })[0]["value"];
+    return element.key === "photoData";
+  })[0].value;
 
   const client = new S3Client({ region: "ap-northeast-1" });
   const input: PutObjectCommandInput = {

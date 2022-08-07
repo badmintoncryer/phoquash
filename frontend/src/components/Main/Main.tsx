@@ -1,17 +1,14 @@
-import {
-  AuthEventData,
-  CognitoUserAmplify,
-} from "@aws-amplify/ui-react/node_modules/@aws-amplify/ui";
-import { Home } from "components/pages/home/Home";
-import { Picture } from "components/pages/picture/Picture";
-import { TravelRecord } from "components/pages/travelRecord/TravelRecord";
-import AppBar from "components/uiParts/appBar/AppBar";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { AuthEventData, CognitoUserAmplify } from '@aws-amplify/ui-react/node_modules/@aws-amplify/ui'
+import { Home } from 'components/pages/home/Home'
+import { Picture } from 'components/pages/picture/Picture'
+import { TravelRecord } from 'components/pages/travelRecord/TravelRecord'
+import AppBar from 'components/uiParts/appBar/AppBar'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 export type MainProps = {
-  signOut?: (data?: AuthEventData | undefined) => void;
-  user?: CognitoUserAmplify;
-};
+  signOut?: (data?: AuthEventData | undefined) => void
+  user?: CognitoUserAmplify
+}
 
 export const Main = (props: MainProps) => {
   return (
@@ -21,10 +18,7 @@ export const Main = (props: MainProps) => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/travel-record/" element={<TravelRecord />} />
-          <Route
-            path="/travel-record/{travelId}/{pictureId}"
-            element={<Picture />}
-          />
+          <Route path="/travel-record/{travelId}/{pictureId}" element={<Picture />} />
         </Routes>
       </BrowserRouter>
     </main>
@@ -36,5 +30,5 @@ export const Main = (props: MainProps) => {
     //   )}
     //   <button onClick={props.signOut}>Sign out</button>
     // </main>
-  );
-};
+  )
+}

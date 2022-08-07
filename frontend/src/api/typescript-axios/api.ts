@@ -12,12 +12,8 @@
  * Do not edit the class manually.
  */
 
-import { Configuration } from "./configuration";
-import globalAxios, {
-  AxiosPromise,
-  AxiosInstance,
-  AxiosRequestConfig,
-} from "axios";
+import { Configuration } from './configuration'
+import globalAxios, { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios'
 // Some imports not used depending on template conditions
 // @ts-ignore
 import {
@@ -30,16 +26,10 @@ import {
   setSearchParams,
   serializeDataIfNeeded,
   toPathString,
-  createRequestFunction,
-} from "./common";
+  createRequestFunction
+} from './common'
 // @ts-ignore
-import {
-  BASE_PATH,
-  COLLECTION_FORMATS,
-  RequestArgs,
-  BaseAPI,
-  RequiredError,
-} from "./base";
+import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from './base'
 
 /**
  *
@@ -52,19 +42,19 @@ export interface CreateTravelRecordReturn {
    * @type {string}
    * @memberof CreateTravelRecordReturn
    */
-  status: string;
+  status: string
   /**
    *
    * @type {string}
    * @memberof CreateTravelRecordReturn
    */
-  message: string;
+  message: string
   /**
    *
    * @type {number}
    * @memberof CreateTravelRecordReturn
    */
-  travelRecordId?: number;
+  travelRecordId?: number
 }
 /**
  *
@@ -77,19 +67,19 @@ export interface CreateUserReturn {
    * @type {string}
    * @memberof CreateUserReturn
    */
-  status: string;
+  status: string
   /**
    *
    * @type {string}
    * @memberof CreateUserReturn
    */
-  message: string;
+  message: string
   /**
    *
    * @type {number}
    * @memberof CreateUserReturn
    */
-  userId?: number;
+  userId?: number
 }
 /**
  *
@@ -102,13 +92,13 @@ export interface DeleteTravelRecordReturn {
    * @type {string}
    * @memberof DeleteTravelRecordReturn
    */
-  status: string;
+  status: string
   /**
    *
    * @type {string}
    * @memberof DeleteTravelRecordReturn
    */
-  message: string;
+  message: string
 }
 /**
  *
@@ -121,13 +111,13 @@ export interface DeleteTravelReturn {
    * @type {string}
    * @memberof DeleteTravelReturn
    */
-  status: string;
+  status: string
   /**
    *
    * @type {string}
    * @memberof DeleteTravelReturn
    */
-  message: string;
+  message: string
 }
 /**
  *
@@ -140,13 +130,13 @@ export interface DeleteUserReturn {
    * @type {string}
    * @memberof DeleteUserReturn
    */
-  status: string;
+  status: string
   /**
    *
    * @type {string}
    * @memberof DeleteUserReturn
    */
-  message: string;
+  message: string
 }
 /**
  *
@@ -159,31 +149,31 @@ export interface PhotoRequestBody {
    * @type {string}
    * @memberof PhotoRequestBody
    */
-  description?: string;
+  description?: string
   /**
    *
    * @type {number}
    * @memberof PhotoRequestBody
    */
-  travelRecordId: number;
+  travelRecordId: number
   /**
    *
    * @type {string}
    * @memberof PhotoRequestBody
    */
-  fileName: string;
+  fileName: string
   /**
    *
    * @type {string}
    * @memberof PhotoRequestBody
    */
-  filePath: string;
+  filePath: string
   /**
    *
    * @type {string}
    * @memberof PhotoRequestBody
    */
-  isFavorite?: string;
+  isFavorite?: string
 }
 /**
  *
@@ -196,19 +186,19 @@ export interface PostPhotoReturn {
    * @type {string}
    * @memberof PostPhotoReturn
    */
-  status: string;
+  status: string
   /**
    *
    * @type {string}
    * @memberof PostPhotoReturn
    */
-  message: string;
+  message: string
   /**
    *
    * @type {number}
    * @memberof PostPhotoReturn
    */
-  photoId?: number;
+  photoId?: number
 }
 /**
  *
@@ -221,19 +211,19 @@ export interface PostTravelReturn {
    * @type {string}
    * @memberof PostTravelReturn
    */
-  status: string;
+  status: string
   /**
    *
    * @type {string}
    * @memberof PostTravelReturn
    */
-  message: string;
+  message: string
   /**
    *
    * @type {number}
    * @memberof PostTravelReturn
    */
-  travelId?: number;
+  travelId?: number
 }
 /**
  *
@@ -246,31 +236,31 @@ export interface TravelData {
    * @type {string}
    * @memberof TravelData
    */
-  status: string;
+  status: string
   /**
    *
    * @type {string}
    * @memberof TravelData
    */
-  message: string;
+  message: string
   /**
    *
    * @type {number}
    * @memberof TravelData
    */
-  travelId?: number;
+  travelId?: number
   /**
    *
    * @type {number}
    * @memberof TravelData
    */
-  userId?: number;
+  userId?: number
   /**
    *
    * @type {number}
    * @memberof TravelData
    */
-  travelRecordId?: number;
+  travelRecordId?: number
 }
 /**
  *
@@ -283,25 +273,25 @@ export interface TravelDataRequestBody {
    * @type {string}
    * @memberof TravelDataRequestBody
    */
-  userName: string;
+  userName: string
   /**
    *
    * @type {string}
    * @memberof TravelDataRequestBody
    */
-  title: string;
+  title: string
   /**
    *
    * @type {number}
    * @memberof TravelDataRequestBody
    */
-  startDate: number;
+  startDate: number
   /**
    *
-   * @type {Interger}
+   * @type {number}
    * @memberof TravelDataRequestBody
    */
-  endDate: Interger;
+  endDate: number
 }
 /**
  *
@@ -314,25 +304,25 @@ export interface TravelRecordRequestBody {
    * @type {string}
    * @memberof TravelRecordRequestBody
    */
-  userName: string;
+  userName: string
   /**
    *
    * @type {string}
    * @memberof TravelRecordRequestBody
    */
-  title?: string;
+  title?: string
   /**
    *
    * @type {number}
    * @memberof TravelRecordRequestBody
    */
-  startDate?: number;
+  startDate?: number
   /**
    *
    * @type {number}
    * @memberof TravelRecordRequestBody
    */
-  endDate?: number;
+  endDate?: number
 }
 /**
  *
@@ -345,34 +335,32 @@ export interface UserData {
    * @type {string}
    * @memberof UserData
    */
-  status: string;
+  status: string
   /**
    *
    * @type {string}
    * @memberof UserData
    */
-  message: string;
+  message: string
   /**
    *
    * @type {number}
    * @memberof UserData
    */
-  userId?: number;
+  userId?: number
   /**
    *
    * @type {string}
    * @memberof UserData
    */
-  userName?: string;
+  userName?: string
 }
 
 /**
  * PhotoApi - axios parameter creator
  * @export
  */
-export const PhotoApiAxiosParamCreator = function (
-  configuration?: Configuration
-) {
+export const PhotoApiAxiosParamCreator = function (configuration?: Configuration) {
   return {
     /**
      *
@@ -385,52 +373,39 @@ export const PhotoApiAxiosParamCreator = function (
       photoRequestBody?: PhotoRequestBody,
       options: AxiosRequestConfig = {}
     ): Promise<RequestArgs> => {
-      const localVarPath = `/photo`;
+      const localVarPath = `/photo`
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
       if (configuration) {
-        baseOptions = configuration.baseOptions;
+        baseOptions = configuration.baseOptions
       }
 
-      const localVarRequestOptions = {
-        method: "POST",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
+      const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
 
-      localVarHeaderParameter["Content-Type"] = "application/json";
+      localVarHeaderParameter['Content-Type'] = 'application/json'
 
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-      localVarRequestOptions.data = serializeDataIfNeeded(
-        photoRequestBody,
-        localVarRequestOptions,
-        configuration
-      );
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+      localVarRequestOptions.data = serializeDataIfNeeded(photoRequestBody, localVarRequestOptions, configuration)
 
       return {
         url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-  };
-};
+        options: localVarRequestOptions
+      }
+    }
+  }
+}
 
 /**
  * PhotoApi - functional programming interface
  * @export
  */
 export const PhotoApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator = PhotoApiAxiosParamCreator(configuration);
+  const localVarAxiosParamCreator = PhotoApiAxiosParamCreator(configuration)
   return {
     /**
      *
@@ -442,36 +417,19 @@ export const PhotoApiFp = function (configuration?: Configuration) {
     async createPhoto(
       photoRequestBody?: PhotoRequestBody,
       options?: AxiosRequestConfig
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string
-      ) => AxiosPromise<Array<PostPhotoReturn>>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.createPhoto(
-        photoRequestBody,
-        options
-      );
-      return createRequestFunction(
-        localVarAxiosArgs,
-        globalAxios,
-        BASE_PATH,
-        configuration
-      );
-    },
-  };
-};
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<PostPhotoReturn>>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.createPhoto(photoRequestBody, options)
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)
+    }
+  }
+}
 
 /**
  * PhotoApi - factory interface
  * @export
  */
-export const PhotoApiFactory = function (
-  configuration?: Configuration,
-  basePath?: string,
-  axios?: AxiosInstance
-) {
-  const localVarFp = PhotoApiFp(configuration);
+export const PhotoApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+  const localVarFp = PhotoApiFp(configuration)
   return {
     /**
      *
@@ -480,16 +438,11 @@ export const PhotoApiFactory = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    createPhoto(
-      photoRequestBody?: PhotoRequestBody,
-      options?: any
-    ): AxiosPromise<Array<PostPhotoReturn>> {
-      return localVarFp
-        .createPhoto(photoRequestBody, options)
-        .then((request) => request(axios, basePath));
-    },
-  };
-};
+    createPhoto(photoRequestBody?: PhotoRequestBody, options?: any): AxiosPromise<Array<PostPhotoReturn>> {
+      return localVarFp.createPhoto(photoRequestBody, options).then((request) => request(axios, basePath))
+    }
+  }
+}
 
 /**
  * PhotoApi - object-oriented interface
@@ -506,13 +459,10 @@ export class PhotoApi extends BaseAPI {
    * @throws {RequiredError}
    * @memberof PhotoApi
    */
-  public createPhoto(
-    photoRequestBody?: PhotoRequestBody,
-    options?: AxiosRequestConfig
-  ) {
+  public createPhoto(photoRequestBody?: PhotoRequestBody, options?: AxiosRequestConfig) {
     return PhotoApiFp(this.configuration)
       .createPhoto(photoRequestBody, options)
-      .then((request) => request(this.axios, this.basePath));
+      .then((request) => request(this.axios, this.basePath))
   }
 }
 
@@ -520,9 +470,7 @@ export class PhotoApi extends BaseAPI {
  * TravelApi - axios parameter creator
  * @export
  */
-export const TravelApiAxiosParamCreator = function (
-  configuration?: Configuration
-) {
+export const TravelApiAxiosParamCreator = function (configuration?: Configuration) {
   return {
     /**
      *
@@ -535,42 +483,29 @@ export const TravelApiAxiosParamCreator = function (
       travelDataRequestBody?: TravelDataRequestBody,
       options: AxiosRequestConfig = {}
     ): Promise<RequestArgs> => {
-      const localVarPath = `/travel`;
+      const localVarPath = `/travel`
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
       if (configuration) {
-        baseOptions = configuration.baseOptions;
+        baseOptions = configuration.baseOptions
       }
 
-      const localVarRequestOptions = {
-        method: "POST",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
+      const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
 
-      localVarHeaderParameter["Content-Type"] = "application/json";
+      localVarHeaderParameter['Content-Type'] = 'application/json'
 
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-      localVarRequestOptions.data = serializeDataIfNeeded(
-        travelDataRequestBody,
-        localVarRequestOptions,
-        configuration
-      );
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+      localVarRequestOptions.data = serializeDataIfNeeded(travelDataRequestBody, localVarRequestOptions, configuration)
 
       return {
         url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
+        options: localVarRequestOptions
+      }
     },
     /**
      *
@@ -583,42 +518,29 @@ export const TravelApiAxiosParamCreator = function (
       travelDataRequestBody?: TravelDataRequestBody,
       options: AxiosRequestConfig = {}
     ): Promise<RequestArgs> => {
-      const localVarPath = `/travel`;
+      const localVarPath = `/travel`
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
       if (configuration) {
-        baseOptions = configuration.baseOptions;
+        baseOptions = configuration.baseOptions
       }
 
-      const localVarRequestOptions = {
-        method: "DELETE",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
+      const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
 
-      localVarHeaderParameter["Content-Type"] = "application/json";
+      localVarHeaderParameter['Content-Type'] = 'application/json'
 
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-      localVarRequestOptions.data = serializeDataIfNeeded(
-        travelDataRequestBody,
-        localVarRequestOptions,
-        configuration
-      );
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+      localVarRequestOptions.data = serializeDataIfNeeded(travelDataRequestBody, localVarRequestOptions, configuration)
 
       return {
         url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
+        options: localVarRequestOptions
+      }
     },
     /**
      *
@@ -627,44 +549,29 @@ export const TravelApiAxiosParamCreator = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    deleteTravelById: async (
-      travelId: string,
-      options: AxiosRequestConfig = {}
-    ): Promise<RequestArgs> => {
+    deleteTravelById: async (travelId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
       // verify required parameter 'travelId' is not null or undefined
-      assertParamExists("deleteTravelById", "travelId", travelId);
-      const localVarPath = `/travel/{travelId}`.replace(
-        `{${"travelId"}}`,
-        encodeURIComponent(String(travelId))
-      );
+      assertParamExists('deleteTravelById', 'travelId', travelId)
+      const localVarPath = `/travel/{travelId}`.replace(`{${'travelId'}}`, encodeURIComponent(String(travelId)))
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
       if (configuration) {
-        baseOptions = configuration.baseOptions;
+        baseOptions = configuration.baseOptions
       }
 
-      const localVarRequestOptions = {
-        method: "DELETE",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
+      const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
 
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
       return {
         url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
+        options: localVarRequestOptions
+      }
     },
     /**
      *
@@ -673,54 +580,39 @@ export const TravelApiAxiosParamCreator = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getTravelById: async (
-      travelId: string,
-      options: AxiosRequestConfig = {}
-    ): Promise<RequestArgs> => {
+    getTravelById: async (travelId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
       // verify required parameter 'travelId' is not null or undefined
-      assertParamExists("getTravelById", "travelId", travelId);
-      const localVarPath = `/travel/{travelId}`.replace(
-        `{${"travelId"}}`,
-        encodeURIComponent(String(travelId))
-      );
+      assertParamExists('getTravelById', 'travelId', travelId)
+      const localVarPath = `/travel/{travelId}`.replace(`{${'travelId'}}`, encodeURIComponent(String(travelId)))
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
       if (configuration) {
-        baseOptions = configuration.baseOptions;
+        baseOptions = configuration.baseOptions
       }
 
-      const localVarRequestOptions = {
-        method: "GET",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
+      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
 
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
       return {
         url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-  };
-};
+        options: localVarRequestOptions
+      }
+    }
+  }
+}
 
 /**
  * TravelApi - functional programming interface
  * @export
  */
 export const TravelApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator = TravelApiAxiosParamCreator(configuration);
+  const localVarAxiosParamCreator = TravelApiAxiosParamCreator(configuration)
   return {
     /**
      *
@@ -732,22 +624,9 @@ export const TravelApiFp = function (configuration?: Configuration) {
     async createTravel(
       travelDataRequestBody?: TravelDataRequestBody,
       options?: AxiosRequestConfig
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string
-      ) => AxiosPromise<Array<PostTravelReturn>>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.createTravel(
-        travelDataRequestBody,
-        options
-      );
-      return createRequestFunction(
-        localVarAxiosArgs,
-        globalAxios,
-        BASE_PATH,
-        configuration
-      );
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<PostTravelReturn>>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.createTravel(travelDataRequestBody, options)
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)
     },
     /**
      *
@@ -759,22 +638,9 @@ export const TravelApiFp = function (configuration?: Configuration) {
     async deleteTravel(
       travelDataRequestBody?: TravelDataRequestBody,
       options?: AxiosRequestConfig
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string
-      ) => AxiosPromise<Array<DeleteTravelReturn>>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.deleteTravel(
-        travelDataRequestBody,
-        options
-      );
-      return createRequestFunction(
-        localVarAxiosArgs,
-        globalAxios,
-        BASE_PATH,
-        configuration
-      );
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<DeleteTravelReturn>>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.deleteTravel(travelDataRequestBody, options)
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)
     },
     /**
      *
@@ -786,20 +652,9 @@ export const TravelApiFp = function (configuration?: Configuration) {
     async deleteTravelById(
       travelId: string,
       options?: AxiosRequestConfig
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string
-      ) => AxiosPromise<Array<DeleteTravelReturn>>
-    > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.deleteTravelById(travelId, options);
-      return createRequestFunction(
-        localVarAxiosArgs,
-        globalAxios,
-        BASE_PATH,
-        configuration
-      );
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<DeleteTravelReturn>>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.deleteTravelById(travelId, options)
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)
     },
     /**
      *
@@ -811,36 +666,19 @@ export const TravelApiFp = function (configuration?: Configuration) {
     async getTravelById(
       travelId: string,
       options?: AxiosRequestConfig
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string
-      ) => AxiosPromise<Array<TravelData>>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getTravelById(
-        travelId,
-        options
-      );
-      return createRequestFunction(
-        localVarAxiosArgs,
-        globalAxios,
-        BASE_PATH,
-        configuration
-      );
-    },
-  };
-};
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TravelData>>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.getTravelById(travelId, options)
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)
+    }
+  }
+}
 
 /**
  * TravelApi - factory interface
  * @export
  */
-export const TravelApiFactory = function (
-  configuration?: Configuration,
-  basePath?: string,
-  axios?: AxiosInstance
-) {
-  const localVarFp = TravelApiFp(configuration);
+export const TravelApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+  const localVarFp = TravelApiFp(configuration)
   return {
     /**
      *
@@ -849,13 +687,8 @@ export const TravelApiFactory = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    createTravel(
-      travelDataRequestBody?: TravelDataRequestBody,
-      options?: any
-    ): AxiosPromise<Array<PostTravelReturn>> {
-      return localVarFp
-        .createTravel(travelDataRequestBody, options)
-        .then((request) => request(axios, basePath));
+    createTravel(travelDataRequestBody?: TravelDataRequestBody, options?: any): AxiosPromise<Array<PostTravelReturn>> {
+      return localVarFp.createTravel(travelDataRequestBody, options).then((request) => request(axios, basePath))
     },
     /**
      *
@@ -868,9 +701,7 @@ export const TravelApiFactory = function (
       travelDataRequestBody?: TravelDataRequestBody,
       options?: any
     ): AxiosPromise<Array<DeleteTravelReturn>> {
-      return localVarFp
-        .deleteTravel(travelDataRequestBody, options)
-        .then((request) => request(axios, basePath));
+      return localVarFp.deleteTravel(travelDataRequestBody, options).then((request) => request(axios, basePath))
     },
     /**
      *
@@ -879,13 +710,8 @@ export const TravelApiFactory = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    deleteTravelById(
-      travelId: string,
-      options?: any
-    ): AxiosPromise<Array<DeleteTravelReturn>> {
-      return localVarFp
-        .deleteTravelById(travelId, options)
-        .then((request) => request(axios, basePath));
+    deleteTravelById(travelId: string, options?: any): AxiosPromise<Array<DeleteTravelReturn>> {
+      return localVarFp.deleteTravelById(travelId, options).then((request) => request(axios, basePath))
     },
     /**
      *
@@ -894,16 +720,11 @@ export const TravelApiFactory = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getTravelById(
-      travelId: string,
-      options?: any
-    ): AxiosPromise<Array<TravelData>> {
-      return localVarFp
-        .getTravelById(travelId, options)
-        .then((request) => request(axios, basePath));
-    },
-  };
-};
+    getTravelById(travelId: string, options?: any): AxiosPromise<Array<TravelData>> {
+      return localVarFp.getTravelById(travelId, options).then((request) => request(axios, basePath))
+    }
+  }
+}
 
 /**
  * TravelApi - object-oriented interface
@@ -920,13 +741,10 @@ export class TravelApi extends BaseAPI {
    * @throws {RequiredError}
    * @memberof TravelApi
    */
-  public createTravel(
-    travelDataRequestBody?: TravelDataRequestBody,
-    options?: AxiosRequestConfig
-  ) {
+  public createTravel(travelDataRequestBody?: TravelDataRequestBody, options?: AxiosRequestConfig) {
     return TravelApiFp(this.configuration)
       .createTravel(travelDataRequestBody, options)
-      .then((request) => request(this.axios, this.basePath));
+      .then((request) => request(this.axios, this.basePath))
   }
 
   /**
@@ -937,13 +755,10 @@ export class TravelApi extends BaseAPI {
    * @throws {RequiredError}
    * @memberof TravelApi
    */
-  public deleteTravel(
-    travelDataRequestBody?: TravelDataRequestBody,
-    options?: AxiosRequestConfig
-  ) {
+  public deleteTravel(travelDataRequestBody?: TravelDataRequestBody, options?: AxiosRequestConfig) {
     return TravelApiFp(this.configuration)
       .deleteTravel(travelDataRequestBody, options)
-      .then((request) => request(this.axios, this.basePath));
+      .then((request) => request(this.axios, this.basePath))
   }
 
   /**
@@ -957,7 +772,7 @@ export class TravelApi extends BaseAPI {
   public deleteTravelById(travelId: string, options?: AxiosRequestConfig) {
     return TravelApiFp(this.configuration)
       .deleteTravelById(travelId, options)
-      .then((request) => request(this.axios, this.basePath));
+      .then((request) => request(this.axios, this.basePath))
   }
 
   /**
@@ -971,7 +786,7 @@ export class TravelApi extends BaseAPI {
   public getTravelById(travelId: string, options?: AxiosRequestConfig) {
     return TravelApiFp(this.configuration)
       .getTravelById(travelId, options)
-      .then((request) => request(this.axios, this.basePath));
+      .then((request) => request(this.axios, this.basePath))
   }
 }
 
@@ -979,9 +794,7 @@ export class TravelApi extends BaseAPI {
  * TravelRecordApi - axios parameter creator
  * @export
  */
-export const TravelRecordApiAxiosParamCreator = function (
-  configuration?: Configuration
-) {
+export const TravelRecordApiAxiosParamCreator = function (configuration?: Configuration) {
   return {
     /**
      *
@@ -994,42 +807,33 @@ export const TravelRecordApiAxiosParamCreator = function (
       travelRecordRequestBody?: TravelRecordRequestBody,
       options: AxiosRequestConfig = {}
     ): Promise<RequestArgs> => {
-      const localVarPath = `/travelRecord`;
+      const localVarPath = `/travelRecord`
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
       if (configuration) {
-        baseOptions = configuration.baseOptions;
+        baseOptions = configuration.baseOptions
       }
 
-      const localVarRequestOptions = {
-        method: "POST",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
+      const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
 
-      localVarHeaderParameter["Content-Type"] = "application/json";
+      localVarHeaderParameter['Content-Type'] = 'application/json'
 
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
       localVarRequestOptions.data = serializeDataIfNeeded(
         travelRecordRequestBody,
         localVarRequestOptions,
         configuration
-      );
+      )
 
       return {
         url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
+        options: localVarRequestOptions
+      }
     },
     /**
      *
@@ -1042,42 +846,29 @@ export const TravelRecordApiAxiosParamCreator = function (
       travelDataRequestBody?: TravelDataRequestBody,
       options: AxiosRequestConfig = {}
     ): Promise<RequestArgs> => {
-      const localVarPath = `/travelRecord`;
+      const localVarPath = `/travelRecord`
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
       if (configuration) {
-        baseOptions = configuration.baseOptions;
+        baseOptions = configuration.baseOptions
       }
 
-      const localVarRequestOptions = {
-        method: "DELETE",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
+      const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
 
-      localVarHeaderParameter["Content-Type"] = "application/json";
+      localVarHeaderParameter['Content-Type'] = 'application/json'
 
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-      localVarRequestOptions.data = serializeDataIfNeeded(
-        travelDataRequestBody,
-        localVarRequestOptions,
-        configuration
-      );
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+      localVarRequestOptions.data = serializeDataIfNeeded(travelDataRequestBody, localVarRequestOptions, configuration)
 
       return {
         url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
+        options: localVarRequestOptions
+      }
     },
     /**
      *
@@ -1086,59 +877,42 @@ export const TravelRecordApiAxiosParamCreator = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    deleteTravelRecordById: async (
-      travelRecordId: string,
-      options: AxiosRequestConfig = {}
-    ): Promise<RequestArgs> => {
+    deleteTravelRecordById: async (travelRecordId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
       // verify required parameter 'travelRecordId' is not null or undefined
-      assertParamExists(
-        "deleteTravelRecordById",
-        "travelRecordId",
-        travelRecordId
-      );
+      assertParamExists('deleteTravelRecordById', 'travelRecordId', travelRecordId)
       const localVarPath = `/travelRecord/{travelRecordId}`.replace(
-        `{${"travelRecordId"}}`,
+        `{${'travelRecordId'}}`,
         encodeURIComponent(String(travelRecordId))
-      );
+      )
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
       if (configuration) {
-        baseOptions = configuration.baseOptions;
+        baseOptions = configuration.baseOptions
       }
 
-      const localVarRequestOptions = {
-        method: "DELETE",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
+      const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
 
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
       return {
         url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-  };
-};
+        options: localVarRequestOptions
+      }
+    }
+  }
+}
 
 /**
  * TravelRecordApi - functional programming interface
  * @export
  */
 export const TravelRecordApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator =
-    TravelRecordApiAxiosParamCreator(configuration);
+  const localVarAxiosParamCreator = TravelRecordApiAxiosParamCreator(configuration)
   return {
     /**
      *
@@ -1150,23 +924,9 @@ export const TravelRecordApiFp = function (configuration?: Configuration) {
     async createTravelRecord(
       travelRecordRequestBody?: TravelRecordRequestBody,
       options?: AxiosRequestConfig
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string
-      ) => AxiosPromise<Array<CreateTravelRecordReturn>>
-    > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.createTravelRecord(
-          travelRecordRequestBody,
-          options
-        );
-      return createRequestFunction(
-        localVarAxiosArgs,
-        globalAxios,
-        BASE_PATH,
-        configuration
-      );
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<CreateTravelRecordReturn>>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.createTravelRecord(travelRecordRequestBody, options)
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)
     },
     /**
      *
@@ -1178,23 +938,9 @@ export const TravelRecordApiFp = function (configuration?: Configuration) {
     async deleteTravelRecord(
       travelDataRequestBody?: TravelDataRequestBody,
       options?: AxiosRequestConfig
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string
-      ) => AxiosPromise<Array<DeleteTravelRecordReturn>>
-    > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.deleteTravelRecord(
-          travelDataRequestBody,
-          options
-        );
-      return createRequestFunction(
-        localVarAxiosArgs,
-        globalAxios,
-        BASE_PATH,
-        configuration
-      );
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<DeleteTravelRecordReturn>>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.deleteTravelRecord(travelDataRequestBody, options)
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)
     },
     /**
      *
@@ -1206,26 +952,12 @@ export const TravelRecordApiFp = function (configuration?: Configuration) {
     async deleteTravelRecordById(
       travelRecordId: string,
       options?: AxiosRequestConfig
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string
-      ) => AxiosPromise<Array<DeleteTravelRecordReturn>>
-    > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.deleteTravelRecordById(
-          travelRecordId,
-          options
-        );
-      return createRequestFunction(
-        localVarAxiosArgs,
-        globalAxios,
-        BASE_PATH,
-        configuration
-      );
-    },
-  };
-};
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<DeleteTravelRecordReturn>>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.deleteTravelRecordById(travelRecordId, options)
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)
+    }
+  }
+}
 
 /**
  * TravelRecordApi - factory interface
@@ -1236,7 +968,7 @@ export const TravelRecordApiFactory = function (
   basePath?: string,
   axios?: AxiosInstance
 ) {
-  const localVarFp = TravelRecordApiFp(configuration);
+  const localVarFp = TravelRecordApiFp(configuration)
   return {
     /**
      *
@@ -1249,9 +981,7 @@ export const TravelRecordApiFactory = function (
       travelRecordRequestBody?: TravelRecordRequestBody,
       options?: any
     ): AxiosPromise<Array<CreateTravelRecordReturn>> {
-      return localVarFp
-        .createTravelRecord(travelRecordRequestBody, options)
-        .then((request) => request(axios, basePath));
+      return localVarFp.createTravelRecord(travelRecordRequestBody, options).then((request) => request(axios, basePath))
     },
     /**
      *
@@ -1264,9 +994,7 @@ export const TravelRecordApiFactory = function (
       travelDataRequestBody?: TravelDataRequestBody,
       options?: any
     ): AxiosPromise<Array<DeleteTravelRecordReturn>> {
-      return localVarFp
-        .deleteTravelRecord(travelDataRequestBody, options)
-        .then((request) => request(axios, basePath));
+      return localVarFp.deleteTravelRecord(travelDataRequestBody, options).then((request) => request(axios, basePath))
     },
     /**
      *
@@ -1275,16 +1003,11 @@ export const TravelRecordApiFactory = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    deleteTravelRecordById(
-      travelRecordId: string,
-      options?: any
-    ): AxiosPromise<Array<DeleteTravelRecordReturn>> {
-      return localVarFp
-        .deleteTravelRecordById(travelRecordId, options)
-        .then((request) => request(axios, basePath));
-    },
-  };
-};
+    deleteTravelRecordById(travelRecordId: string, options?: any): AxiosPromise<Array<DeleteTravelRecordReturn>> {
+      return localVarFp.deleteTravelRecordById(travelRecordId, options).then((request) => request(axios, basePath))
+    }
+  }
+}
 
 /**
  * TravelRecordApi - object-oriented interface
@@ -1301,13 +1024,10 @@ export class TravelRecordApi extends BaseAPI {
    * @throws {RequiredError}
    * @memberof TravelRecordApi
    */
-  public createTravelRecord(
-    travelRecordRequestBody?: TravelRecordRequestBody,
-    options?: AxiosRequestConfig
-  ) {
+  public createTravelRecord(travelRecordRequestBody?: TravelRecordRequestBody, options?: AxiosRequestConfig) {
     return TravelRecordApiFp(this.configuration)
       .createTravelRecord(travelRecordRequestBody, options)
-      .then((request) => request(this.axios, this.basePath));
+      .then((request) => request(this.axios, this.basePath))
   }
 
   /**
@@ -1318,13 +1038,10 @@ export class TravelRecordApi extends BaseAPI {
    * @throws {RequiredError}
    * @memberof TravelRecordApi
    */
-  public deleteTravelRecord(
-    travelDataRequestBody?: TravelDataRequestBody,
-    options?: AxiosRequestConfig
-  ) {
+  public deleteTravelRecord(travelDataRequestBody?: TravelDataRequestBody, options?: AxiosRequestConfig) {
     return TravelRecordApiFp(this.configuration)
       .deleteTravelRecord(travelDataRequestBody, options)
-      .then((request) => request(this.axios, this.basePath));
+      .then((request) => request(this.axios, this.basePath))
   }
 
   /**
@@ -1335,13 +1052,10 @@ export class TravelRecordApi extends BaseAPI {
    * @throws {RequiredError}
    * @memberof TravelRecordApi
    */
-  public deleteTravelRecordById(
-    travelRecordId: string,
-    options?: AxiosRequestConfig
-  ) {
+  public deleteTravelRecordById(travelRecordId: string, options?: AxiosRequestConfig) {
     return TravelRecordApiFp(this.configuration)
       .deleteTravelRecordById(travelRecordId, options)
-      .then((request) => request(this.axios, this.basePath));
+      .then((request) => request(this.axios, this.basePath))
   }
 }
 
@@ -1349,9 +1063,7 @@ export class TravelRecordApi extends BaseAPI {
  * UserApi - axios parameter creator
  * @export
  */
-export const UserApiAxiosParamCreator = function (
-  configuration?: Configuration
-) {
+export const UserApiAxiosParamCreator = function (configuration?: Configuration) {
   return {
     /**
      *
@@ -1359,38 +1071,27 @@ export const UserApiAxiosParamCreator = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    createUser: async (
-      options: AxiosRequestConfig = {}
-    ): Promise<RequestArgs> => {
-      const localVarPath = `/user`;
+    createUser: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+      const localVarPath = `/user`
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
       if (configuration) {
-        baseOptions = configuration.baseOptions;
+        baseOptions = configuration.baseOptions
       }
 
-      const localVarRequestOptions = {
-        method: "POST",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
+      const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
 
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
       return {
         url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
+        options: localVarRequestOptions
+      }
     },
     /**
      *
@@ -1398,38 +1099,27 @@ export const UserApiAxiosParamCreator = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    deleteUser: async (
-      options: AxiosRequestConfig = {}
-    ): Promise<RequestArgs> => {
-      const localVarPath = `/user`;
+    deleteUser: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+      const localVarPath = `/user`
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
       if (configuration) {
-        baseOptions = configuration.baseOptions;
+        baseOptions = configuration.baseOptions
       }
 
-      const localVarRequestOptions = {
-        method: "DELETE",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
+      const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
 
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
       return {
         url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
+        options: localVarRequestOptions
+      }
     },
     /**
      *
@@ -1438,44 +1128,29 @@ export const UserApiAxiosParamCreator = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    deleteUserById: async (
-      userId: string,
-      options: AxiosRequestConfig = {}
-    ): Promise<RequestArgs> => {
+    deleteUserById: async (userId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
       // verify required parameter 'userId' is not null or undefined
-      assertParamExists("deleteUserById", "userId", userId);
-      const localVarPath = `/user/{userId}`.replace(
-        `{${"userId"}}`,
-        encodeURIComponent(String(userId))
-      );
+      assertParamExists('deleteUserById', 'userId', userId)
+      const localVarPath = `/user/{userId}`.replace(`{${'userId'}}`, encodeURIComponent(String(userId)))
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
       if (configuration) {
-        baseOptions = configuration.baseOptions;
+        baseOptions = configuration.baseOptions
       }
 
-      const localVarRequestOptions = {
-        method: "DELETE",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
+      const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
 
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
       return {
         url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
+        options: localVarRequestOptions
+      }
     },
     /**
      *
@@ -1484,54 +1159,39 @@ export const UserApiAxiosParamCreator = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getUserById: async (
-      userId: string,
-      options: AxiosRequestConfig = {}
-    ): Promise<RequestArgs> => {
+    getUserById: async (userId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
       // verify required parameter 'userId' is not null or undefined
-      assertParamExists("getUserById", "userId", userId);
-      const localVarPath = `/user/{userId}`.replace(
-        `{${"userId"}}`,
-        encodeURIComponent(String(userId))
-      );
+      assertParamExists('getUserById', 'userId', userId)
+      const localVarPath = `/user/{userId}`.replace(`{${'userId'}}`, encodeURIComponent(String(userId)))
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
       if (configuration) {
-        baseOptions = configuration.baseOptions;
+        baseOptions = configuration.baseOptions
       }
 
-      const localVarRequestOptions = {
-        method: "GET",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
+      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
 
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
       return {
         url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-  };
-};
+        options: localVarRequestOptions
+      }
+    }
+  }
+}
 
 /**
  * UserApi - functional programming interface
  * @export
  */
 export const UserApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator = UserApiAxiosParamCreator(configuration);
+  const localVarAxiosParamCreator = UserApiAxiosParamCreator(configuration)
   return {
     /**
      *
@@ -1541,21 +1201,9 @@ export const UserApiFp = function (configuration?: Configuration) {
      */
     async createUser(
       options?: AxiosRequestConfig
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string
-      ) => AxiosPromise<Array<CreateUserReturn>>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.createUser(
-        options
-      );
-      return createRequestFunction(
-        localVarAxiosArgs,
-        globalAxios,
-        BASE_PATH,
-        configuration
-      );
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<CreateUserReturn>>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.createUser(options)
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)
     },
     /**
      *
@@ -1565,21 +1213,9 @@ export const UserApiFp = function (configuration?: Configuration) {
      */
     async deleteUser(
       options?: AxiosRequestConfig
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string
-      ) => AxiosPromise<Array<DeleteUserReturn>>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.deleteUser(
-        options
-      );
-      return createRequestFunction(
-        localVarAxiosArgs,
-        globalAxios,
-        BASE_PATH,
-        configuration
-      );
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<DeleteUserReturn>>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.deleteUser(options)
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)
     },
     /**
      *
@@ -1591,22 +1227,9 @@ export const UserApiFp = function (configuration?: Configuration) {
     async deleteUserById(
       userId: string,
       options?: AxiosRequestConfig
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string
-      ) => AxiosPromise<Array<DeleteUserReturn>>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.deleteUserById(
-        userId,
-        options
-      );
-      return createRequestFunction(
-        localVarAxiosArgs,
-        globalAxios,
-        BASE_PATH,
-        configuration
-      );
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<DeleteUserReturn>>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.deleteUserById(userId, options)
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)
     },
     /**
      *
@@ -1618,36 +1241,19 @@ export const UserApiFp = function (configuration?: Configuration) {
     async getUserById(
       userId: string,
       options?: AxiosRequestConfig
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string
-      ) => AxiosPromise<Array<UserData>>
-    > {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getUserById(
-        userId,
-        options
-      );
-      return createRequestFunction(
-        localVarAxiosArgs,
-        globalAxios,
-        BASE_PATH,
-        configuration
-      );
-    },
-  };
-};
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<UserData>>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.getUserById(userId, options)
+      return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)
+    }
+  }
+}
 
 /**
  * UserApi - factory interface
  * @export
  */
-export const UserApiFactory = function (
-  configuration?: Configuration,
-  basePath?: string,
-  axios?: AxiosInstance
-) {
-  const localVarFp = UserApiFp(configuration);
+export const UserApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+  const localVarFp = UserApiFp(configuration)
   return {
     /**
      *
@@ -1656,9 +1262,7 @@ export const UserApiFactory = function (
      * @throws {RequiredError}
      */
     createUser(options?: any): AxiosPromise<Array<CreateUserReturn>> {
-      return localVarFp
-        .createUser(options)
-        .then((request) => request(axios, basePath));
+      return localVarFp.createUser(options).then((request) => request(axios, basePath))
     },
     /**
      *
@@ -1667,9 +1271,7 @@ export const UserApiFactory = function (
      * @throws {RequiredError}
      */
     deleteUser(options?: any): AxiosPromise<Array<DeleteUserReturn>> {
-      return localVarFp
-        .deleteUser(options)
-        .then((request) => request(axios, basePath));
+      return localVarFp.deleteUser(options).then((request) => request(axios, basePath))
     },
     /**
      *
@@ -1678,13 +1280,8 @@ export const UserApiFactory = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    deleteUserById(
-      userId: string,
-      options?: any
-    ): AxiosPromise<Array<DeleteUserReturn>> {
-      return localVarFp
-        .deleteUserById(userId, options)
-        .then((request) => request(axios, basePath));
+    deleteUserById(userId: string, options?: any): AxiosPromise<Array<DeleteUserReturn>> {
+      return localVarFp.deleteUserById(userId, options).then((request) => request(axios, basePath))
     },
     /**
      *
@@ -1694,12 +1291,10 @@ export const UserApiFactory = function (
      * @throws {RequiredError}
      */
     getUserById(userId: string, options?: any): AxiosPromise<Array<UserData>> {
-      return localVarFp
-        .getUserById(userId, options)
-        .then((request) => request(axios, basePath));
-    },
-  };
-};
+      return localVarFp.getUserById(userId, options).then((request) => request(axios, basePath))
+    }
+  }
+}
 
 /**
  * UserApi - object-oriented interface
@@ -1718,7 +1313,7 @@ export class UserApi extends BaseAPI {
   public createUser(options?: AxiosRequestConfig) {
     return UserApiFp(this.configuration)
       .createUser(options)
-      .then((request) => request(this.axios, this.basePath));
+      .then((request) => request(this.axios, this.basePath))
   }
 
   /**
@@ -1731,7 +1326,7 @@ export class UserApi extends BaseAPI {
   public deleteUser(options?: AxiosRequestConfig) {
     return UserApiFp(this.configuration)
       .deleteUser(options)
-      .then((request) => request(this.axios, this.basePath));
+      .then((request) => request(this.axios, this.basePath))
   }
 
   /**
@@ -1745,7 +1340,7 @@ export class UserApi extends BaseAPI {
   public deleteUserById(userId: string, options?: AxiosRequestConfig) {
     return UserApiFp(this.configuration)
       .deleteUserById(userId, options)
-      .then((request) => request(this.axios, this.basePath));
+      .then((request) => request(this.axios, this.basePath))
   }
 
   /**
@@ -1759,6 +1354,6 @@ export class UserApi extends BaseAPI {
   public getUserById(userId: string, options?: AxiosRequestConfig) {
     return UserApiFp(this.configuration)
       .getUserById(userId, options)
-      .then((request) => request(this.axios, this.basePath));
+      .then((request) => request(this.axios, this.basePath))
   }
 }
