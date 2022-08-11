@@ -1,8 +1,23 @@
-# Welcome to your CDK TypeScript project
+# Phoquash CDK
 
-This is a blank project for CDK development with TypeScript.
+## 構成
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+CDKによるインフラ構築 + PrismaによるSQLレスなクエリ生成
+
+## 開発手順
+
+1. schema.prismaを修正し、テーブルスキーマを記述する
+2. ```$ prisma generate``` によりprisma clientを生成する
+3. ```$ cdk deploy```によりリソースのデプロイを行う
+4. テーブルスキーマの修正を行った場合、migrationLambdaをinvokeし、prisma migrationを行う
+
+   ```
+   aws lambda invoke --function-name migrationLambda --profile <profileName> out.json
+   ```
+
+This is a blank project for CDK development with TypeScrip
+
+he `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 ## Useful commands
 

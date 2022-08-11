@@ -1,4 +1,5 @@
-import { CfnOutput, Stack, StackProps } from 'aws-cdk-lib'
+/* eslint-disable no-new */
+import { CfnOutput } from 'aws-cdk-lib'
 import { Construct } from 'constructs'
 import * as cognito from 'aws-cdk-lib/aws-cognito'
 import * as dotenv from 'dotenv'
@@ -27,8 +28,7 @@ export class Cognito {
   public facebookProvider: cognito.UserPoolIdentityProviderFacebook
   public googleProvider: cognito.UserPoolIdentityProviderGoogle
   public signInUrl: string
-
-  constructor() {}
+  public userPoolId: string
 
   public createResources(scope: Construct) {
     // ユーザープールの定義
@@ -110,8 +110,10 @@ export class Cognito {
     this.signInUrl = this.domain.signInUrl(this.userPoolClient, {
       redirectUri: applicationUrl // must be a URL configured under 'callbackUrls' with the client
     })
+    this.userPoolId = this.userPool.userPoolId
 
     new CfnOutput(scope, 'SignInUrl', { value: this.signInUrl })
     new CfnOutput(scope, 'clientId', { value: this.clientId })
+    new CfnOutput(scope, 'userPoolId', { value: this.userPoolId })
   }
 }

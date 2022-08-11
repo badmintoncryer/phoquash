@@ -6,13 +6,15 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2'
 import * as path from 'path'
 
 const MOUNT_PATH = '/mnt/db'
+const DB_NAME = 'phoquash.sqlite3'
 
 export interface DatabaseConnectionProps {
-  host: string
-  port: string
-  engine: string
-  username: string
-  password: string
+  url?: string
+  host?: string
+  port?: string
+  engine?: string
+  username?: string
+  password?: string
 }
 
 interface PrismaFunctionProps extends nodeLambda.NodejsFunctionProps {
@@ -24,6 +26,7 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
     super(scope, id, {
       ...props,
       environment: {
+        DATABASE_URL: props.database?.url || `file:${MOUNT_PATH}/${DB_NAME}`,
         DATABASE_HOST: props.database?.host || '',
         DATABASE_PORT: props.database?.port || '',
         DATABASE_ENGINE: props.database?.engine || '',
@@ -32,7 +35,7 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
       },
       bundling: {
         externalModules: ['sqlite3'],
-        nodeModules: ['@prisma/client'].concat(props.bundling?.nodeModules ?? []),
+        nodeModules: ['@prisma/client', 'prisma'].concat(props.bundling?.nodeModules ?? []),
         commandHooks: {
           beforeInstall: (inputDir: string, outputDir: string) => [
             // Copy prisma directory to Lambda code asset
@@ -51,6 +54,7 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
 
 export class Lambda {
   public createDbLambda: lambda.Function
+  public migrationLambda: lambda.Function
   public postUserLambda: lambda.Function
   public deleteUserLambda: lambda.Function
   public deleteUserByIdLambda: lambda.Function
@@ -86,15 +90,22 @@ export class Lambda {
         externalModules: ['sqlite3']
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+      functionName: 'createDbLambda',
       layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/createDb/index.ts'),
       vpc: this.vpc
     })
-
+    this.migrationLambda = new PrismaFunction(scope, 'migration', {
+      filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+      functionName: 'migrationLambda',
+      entry: path.join(__dirname, '../lambda/function/migration/index.ts'),
+      vpc: this.vpc
+    })
     this.postUserLambda = new PrismaFunction(scope, 'postUser', {
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+      functionName: 'postUserLambda',
       layers: [this.nodeLayer],
       entry: path.join(__dirname, '../lambda/function/user/createUser.ts'),
       vpc: this.vpc
@@ -115,6 +126,7 @@ export class Lambda {
         externalModules: ['sqlite3']
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+      functionName: 'deleteUserLambda',
       layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
@@ -126,6 +138,7 @@ export class Lambda {
         externalModules: ['sqlite3']
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+      functionName: 'deleteUserByIdLambda',
       layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
@@ -137,6 +150,7 @@ export class Lambda {
         externalModules: ['sqlite3']
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+      functionName: 'getUserByIdLambda',
       layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
@@ -149,6 +163,7 @@ export class Lambda {
         externalModules: ['sqlite3']
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+      functionName: 'postTravelRecordLambda',
       layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
@@ -160,6 +175,7 @@ export class Lambda {
         externalModules: ['sqlite3']
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+      functionName: 'deleteTravelRecordLambda',
       layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
@@ -171,6 +187,7 @@ export class Lambda {
         externalModules: ['sqlite3']
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+      functionName: 'deleteTravelRecordByIdLambda',
       layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
@@ -183,6 +200,7 @@ export class Lambda {
         externalModules: ['sqlite3']
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+      functionName: 'postTravelLambda',
       layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
@@ -194,6 +212,7 @@ export class Lambda {
         externalModules: ['sqlite3']
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+      functionName: 'deleteTravelLambda',
       layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
@@ -205,6 +224,7 @@ export class Lambda {
         externalModules: ['sqlite3']
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+      functionName: 'deleteTravelByIdLambda',
       layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
@@ -216,6 +236,7 @@ export class Lambda {
         externalModules: ['sqlite3']
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+      functionName: 'getTravelByIdLambda',
       layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
@@ -227,6 +248,7 @@ export class Lambda {
         externalModules: ['sqlite3']
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+      functionName: 'postPhotoLambda',
       layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
@@ -237,6 +259,7 @@ export class Lambda {
       bundling: {
         externalModules: ['@aws-sdk/client-s3']
       },
+      functionName: 'uploadPhotoDataLambda',
       runtime: lambda.Runtime.NODEJS_16_X,
       layers: [this.nodeLayer],
       handler: 'handler',
