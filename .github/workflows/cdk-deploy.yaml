@@ -1,0 +1,48 @@
+name: deploy cdk
+
+on:
+  push:
+    paths:
+      - backend/cdk/**
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ./backend/cdk
+
+env:
+  AWS_ROLE_ARN: arn:aws:iam::214794239830:role/PhoquashGithubActionsDeployRole
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 30
+    steps:
+      # checkout
+      - name: Checkout source code
+        uses: actions/checkout@v2
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ap-northeast-1
+      - run: aws sts get-caller-identity
+      # cacheの設定
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: npm
+          cache-dependency-path: ./backend/cdk/package-lock.json
+      # packageのインストール
+      - name: install dependencies
+        run: |
+          npm install
+          npm install -g aws-cdk
+      # cdkのdeploy
+      - name: deploy
+        run: |
+          cdk deploy --require-approval never

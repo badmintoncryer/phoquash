@@ -8,6 +8,7 @@ enum Status {
 }
 
 exports.handler = async (_event: APIGatewayProxyEventV2WithJWTAuthorizer, _context: Context): Promise<void> => {
+  // migrationのCLI実行を行えないため、子プロセスとしてmigrationを実行する
   const exitCode = await new Promise((resolve, _reject) => {
     childProcess.execFile(
       path.resolve('./node_modules/prisma/build/index.js'),

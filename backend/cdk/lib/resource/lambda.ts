@@ -59,46 +59,6 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
   }
 }
 
-// interface PrismaMigrationFunctionProps extends nodeLambda.NodejsFunctionProps {
-//   database?: DatabaseConnectionProps
-// }
-
-// class PrismaMigrationFunction extends nodeLambda.NodejsFunction {
-//   constructor(scope: Construct, id: string, props: PrismaMigrationFunctionProps) {
-//     super(scope, id, {
-//       ...props,
-//       environment: {
-//         ...props.environment,
-//         DATABASE_URL: props.database?.url || `file:${MOUNT_PATH}/${DB_NAME}`,
-//         DATABASE_HOST: props.database?.host || '',
-//         DATABASE_PORT: props.database?.port || '',
-//         DATABASE_ENGINE: props.database?.engine || '',
-//         DATABASE_USER: props.database?.username || '',
-//         DATABASE_PASSWORD: props.database?.password || ''
-//       },
-//       bundling: {
-//         forceDockerBundling: false,
-//         nodeModules: ['@prisma/client', 'prisma'].concat(props.bundling?.nodeModules ?? []),
-//         commandHooks: {
-//           beforeInstall: (inputDir: string, outputDir: string) => [
-//             // Copy prisma directory to Lambda code asset
-//             // the directory must be located at the same directory as your Lambda code
-//             `cp -r ${inputDir}/prisma ${outputDir}`
-//           ],
-//           beforeBundling: (_inputDir: string, _outputDir: string) => [],
-//           afterBundling: (_inputDir: string, outputDir: string) => [
-//             // lambdaの容量制限対策のため、ファイルサイズの大きいprisma enginesを削除する
-//             `find ${outputDir}/node_modules/prisma -type f | grep 'query-engine-darwin' | xargs rm -rf`
-//           ]
-//         }
-//       },
-//       runtime: lambda.Runtime.NODEJS_16_X,
-//       handler: 'handler',
-//       timeout: Duration.minutes(4)
-//     })
-//   }
-// }
-
 interface DockerPrismaFunctionProps extends lambda.DockerImageFunctionProps {
   database?: DatabaseConnectionProps
 }
@@ -145,30 +105,24 @@ export class Lambda {
   }
 
   public createResources(scope: Construct) {
-    this.nodeLayer = new lambda.LayerVersion(scope, 'nodeLayer', {
-      code: lambda.Code.fromAsset(path.join(__dirname, '../lambda/layer')),
-      compatibleRuntimes: [lambda.Runtime.NODEJS_16_X],
-      description: 'node layer',
-      layerVersionName: 'node-layer'
-    })
-
+    // this.nodeLayer = new lambda.LayerVersion(scope, 'nodeLayer', {
+    //   code: lambda.Code.fromAsset(path.join(__dirname, '../lambda/layer')),
+    //   compatibleRuntimes: [lambda.Runtime.NODEJS_16_X],
+    //   description: 'node layer',
+    //   layerVersionName: 'node-layer'
+    // })
+    // migrationにはnode_modules/@prisma, prismaのいずれのパッケージがすべて必要だったため、
+    // lambdaの容量制限を回避すべくDockerコンテナ型のlambdaとした。
+    // その他queryのみ行うlambdaは@prismaから不要なengineを削除することでlambdaの容量制限を回避できるため、
+    // nodejsFunctionを用いている。
     this.migrationLambda = new DockerPrismaFunction(scope, 'migration', {
       code: DockerImageCode.fromImageAsset('./'),
-      // bundling: {
-      //   dockerImage: DockerImage.fromBuild('./')
-      // },
       memorySize: 256,
       timeout: Duration.minutes(5),
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'migrationLambda',
       vpc: this.vpc
     })
-    // this.migrationLambda = new PrismaMigrationFunction(scope, 'migration', {
-    //   filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
-    //   functionName: 'migrationLambda',
-    //   entry: path.join(__dirname, '../lambda/function/migration/index.ts'),
-    //   vpc: this.vpc
-    // })
     this.postUserLambda = new PrismaFunction(scope, 'postUser', {
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'postUserLambda',
@@ -193,7 +147,7 @@ export class Lambda {
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'getUserByIdLambda',
-      layers: [this.nodeLayer],
+      // layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/user/userId/getUserById.ts'),
@@ -206,7 +160,7 @@ export class Lambda {
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'postTravelRecordLambda',
-      layers: [this.nodeLayer],
+      // layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/travelRecord/createTravelRecord.ts'),
@@ -218,7 +172,7 @@ export class Lambda {
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'deleteTravelRecordLambda',
-      layers: [this.nodeLayer],
+      // layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/travelRecord/deleteTravelRecord.ts'),
@@ -230,7 +184,7 @@ export class Lambda {
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'deleteTravelRecordByIdLambda',
-      layers: [this.nodeLayer],
+      // layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/travelRecord/travelRecordId/deleteTravelRecordById.ts'),
@@ -243,7 +197,7 @@ export class Lambda {
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'postTravelLambda',
-      layers: [this.nodeLayer],
+      // layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/travel/createTravel.ts'),
@@ -255,7 +209,7 @@ export class Lambda {
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'deleteTravelLambda',
-      layers: [this.nodeLayer],
+      // layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/travel/deleteTravel.ts'),
@@ -267,7 +221,7 @@ export class Lambda {
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'deleteTravelByIdLambda',
-      layers: [this.nodeLayer],
+      // layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/travel/travelId/deleteTravelById.ts'),
@@ -279,7 +233,7 @@ export class Lambda {
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'getTravelByIdLambda',
-      layers: [this.nodeLayer],
+      // layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/travel/travelId/getTravelById.ts'),
@@ -291,7 +245,7 @@ export class Lambda {
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'postPhotoLambda',
-      layers: [this.nodeLayer],
+      // layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/photo/createPhoto.ts'),
@@ -303,7 +257,7 @@ export class Lambda {
       },
       functionName: 'uploadPhotoDataLambda',
       runtime: lambda.Runtime.NODEJS_16_X,
-      layers: [this.nodeLayer],
+      // layers: [this.nodeLayer],
       handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/photoData/uploadPhotoData.ts'),
       environment: {
