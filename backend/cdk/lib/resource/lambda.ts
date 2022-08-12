@@ -53,8 +53,8 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
             // `rm -rf ${outputDir}/node_modules/@prisma/engines`,
             `cp ${inputDir}/prisma/schema.prisma ${outputDir}`,
             `cp ${inputDir}/node_modules/.prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node ${outputDir}`,
-            `cp ${inputDir}/node_modules/.prisma/client ${outputDir}/node_modules/.prisma`,
-            `cp ${inputDir}/node_modules/@prisma ${outputDir}/node_modules`
+            `cp -r ${inputDir}/node_modules/.prisma/client ${outputDir}/node_modules/.prisma`,
+            `cp -r ${inputDir}/node_modules/@prisma ${outputDir}/node_modules`
           ]
         }
       },
