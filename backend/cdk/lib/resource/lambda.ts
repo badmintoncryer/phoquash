@@ -209,16 +209,10 @@ export class Lambda {
       entry: path.join(__dirname, '../lambda/function/travel/travelId/getTravelById.ts'),
       vpc: this.vpc
     })
-    this.postPhotoLambda = new nodeLambda.NodejsFunction(scope, 'postPhotoLambda', {
-      bundling: {
-        externalModules: ['sqlite3']
-      },
+    this.postPhotoLambda = new PrismaFunction(scope, 'postPhotoLambda', {
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'postPhotoLambda',
-      // layers: [this.nodeLayer],
-      runtime: lambda.Runtime.NODEJS_16_X,
-      handler: 'handler',
-      entry: path.join(__dirname, '../lambda/function/photo/createPhoto.ts'),
+      entry: path.join(__dirname, '../lambda/function/photo/postPhoto.ts'),
       vpc: this.vpc
     })
     this.uploadPhotoDataLambda = new nodeLambda.NodejsFunction(scope, 'uploadPhotoLambda', {
