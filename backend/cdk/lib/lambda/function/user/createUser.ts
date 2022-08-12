@@ -2,12 +2,14 @@ import { Context, APIGatewayProxyResult, APIGatewayProxyEventV2WithJWTAuthorizer
 import { PrismaClient } from '@prisma/client'
 
 const postUser = async (userName: string) => {
+  console.log('postUser is called')
   const prisma = new PrismaClient()
   const registeredUser = await prisma.user.findMany({
     where: {
       userName
     }
   })
+  console.log({ registeredUser })
   if (registeredUser) {
     return {
       status: 'OK',
@@ -20,6 +22,7 @@ const postUser = async (userName: string) => {
       userName
     }
   })
+  console.log({ user })
   return {
     status: 'OK',
     message: 'user is successfully registered',
@@ -61,8 +64,10 @@ exports.handler = async (
   event: APIGatewayProxyEventV2WithJWTAuthorizer,
   _context: Context
 ): Promise<APIGatewayProxyResult> => {
+  console.log('handler is called')
   // eventが空の場合早期return
   if (!event || !event.body) {
+    console.log('event is invalid')
     return {
       statusCode: 500,
       headers: {
@@ -77,6 +82,7 @@ exports.handler = async (
   }
   // IDトークンからcognitoに登録されたユーザ名を取得
   const userName = getuserName(event)
+  console.log({ userName })
 
   let status = 200
   const response = await postUser(userName).catch((error) => {
