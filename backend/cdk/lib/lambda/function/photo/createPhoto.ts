@@ -1,24 +1,20 @@
-import {
-  Context,
-  APIGatewayProxyResult,
-  APIGatewayProxyEventV2WithJWTAuthorizer,
-} from "aws-lambda";
-import sqlite3 = require("sqlite3");
+import { Context, APIGatewayProxyResult, APIGatewayProxyEventV2WithJWTAuthorizer } from 'aws-lambda'
+import sqlite3 = require('sqlite3')
 
 interface photoIdType {
-  photoId: number;
+  photoId: number
 }
 
 interface postPhotoProps {
-  description: string;
-  travelRecordId: string;
-  fileName: string;
-  filePath: string;
-  isFavorite: string;
+  description: string
+  travelRecordId: string
+  fileName: string
+  filePath: string
+  isFavorite: string
 }
 
 const postPhoto = async (props: postPhotoProps) => {
-  const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");
+  const db = new sqlite3.Database('/mnt/db/phoquash.sqlite3')
   // const db = new sqlite3.Database(
   //   "/Users/cryershinozukakazuho/git/phoquash/backend/cdk/phoquash.sqlite3"
   // );
@@ -27,62 +23,62 @@ const postPhoto = async (props: postPhotoProps) => {
     return new Promise((resolve, reject) => {
       db.get(sql, params, (error: any, row: any) => {
         if (error) {
-          reject(error);
+          reject(error)
         }
-        resolve(row);
-      });
-    });
-  };
+        resolve(row)
+      })
+    })
+  }
   const run = (sql: string, ...params: any) => {
     return new Promise<void>((resolve, reject) => {
       db.run(sql, params, (error: any) => {
         if (error) {
-          reject(error);
+          reject(error)
         }
-        resolve();
-      });
-    });
-  };
+        resolve()
+      })
+    })
+  }
   const close = () => {
     return new Promise<void>((resolve, reject) => {
       db.close((error: any) => {
         if (error) {
-          reject(error);
+          reject(error)
         }
-        resolve();
-      });
-    });
-  };
+        resolve()
+      })
+    })
+  }
 
   await run(
-    "INSERT INTO photo(travelRecordId,description,fileName,filePath,isFavorite) values(?,?,?,?,?)",
+    'INSERT INTO photo(travelRecordId,description,fileName,filePath,isFavorite) values(?,?,?,?,?)',
     props.travelRecordId,
     props.description,
     props.fileName,
     props.filePath,
     props.isFavorite
   ).catch((error) => {
-    console.log(error);
-    throw new Error("table error: " + error.message);
-  });
+    console.log(error)
+    throw new Error('table error: ' + error.message)
+  })
 
   const photoId: photoIdType = await get(
-    "SELECT photoId FROM photo WHERE travelRecordId = ? AND description = ? AND fileName = ? AND filePath = ?",
+    'SELECT photoId FROM photo WHERE travelRecordId = ? AND description = ? AND fileName = ? AND filePath = ?',
     [props.travelRecordId, props.description, props.fileName, props.filePath]
   ).catch((error) => {
-    throw new Error("table error: " + error.message);
-  });
+    throw new Error('table error: ' + error.message)
+  })
 
   await close().catch((error) => {
-    throw new Error("table error: " + error.message);
-  });
+    throw new Error('table error: ' + error.message)
+  })
 
   return {
-    status: "OK",
-    message: "photo is successfully registered",
-    photoId: photoId.photoId,
-  };
-};
+    status: 'OK',
+    message: 'photo is successfully registered',
+    photoId: photoId.photoId
+  }
+}
 
 /**
  * cognitoに登録されているIDTokenからユーザー名を取得する
@@ -91,31 +87,28 @@ const postPhoto = async (props: postPhotoProps) => {
  * @return {*}
  */
 const getuserName = (event: APIGatewayProxyEventV2WithJWTAuthorizer) => {
-  const idToken = event.headers.authorization!.split(" ")[1];
-  const idTokenPayload = idToken.split(".")[1];
-  const decodedIdTokenPayload = Buffer.from(
-    idTokenPayload,
-    "base64"
-  ).toString();
+  const idToken = event.headers.authorization!.split(' ')[1]
+  const idTokenPayload = idToken.split('.')[1]
+  const decodedIdTokenPayload = Buffer.from(idTokenPayload, 'base64').toString()
   const payloadList = decodedIdTokenPayload
-    .replace("{", "")
-    .replace("}", "")
+    .replace('{', '')
+    .replace('}', '')
     // 全ての"を置換する
-    .replace(/"/g, "")
-    .split(",")
+    .replace(/"/g, '')
+    .split(',')
     .map((keyValue) => {
-      console.log(keyValue.split(":").slice(-2));
+      console.log(keyValue.split(':').slice(-2))
       // "key":"value"が基本だが、"cognito:username":"xxx"となっているので、どちらにも対応できるようにしている。
-      const key = keyValue.split(":").slice(-2)[0];
-      const value = keyValue.split(":").slice(-2)[1];
-      return { key: key, value: value };
-    });
+      const key = keyValue.split(':').slice(-2)[0]
+      const value = keyValue.split(':').slice(-2)[1]
+      return { key, value }
+    })
   const cognitoUserName = payloadList.filter((element) => {
-    return element["key"] === "username";
-  })[0]["value"];
+    return element.key === 'username'
+  })[0].value
 
-  return cognitoUserName;
-};
+  return cognitoUserName
+}
 
 /**
  * event引数からbodyパラメータを抜き出す
@@ -125,15 +118,15 @@ const getuserName = (event: APIGatewayProxyEventV2WithJWTAuthorizer) => {
  */
 const getBodyParameter = (event: APIGatewayProxyEventV2WithJWTAuthorizer) => {
   // bodyパラメータを取得し、userNameをデコードする
-  const decodedEventBody = Buffer.from(event.body!, "base64").toString();
-  const bodyList = decodedEventBody.split("&").map((keyValue) => {
-    const key = keyValue.split("=")[0];
-    const value = keyValue.split("=")[1];
-    return { key: key, value: value };
-  });
+  const decodedEventBody = Buffer.from(event.body!, 'base64').toString()
+  const bodyList = decodedEventBody.split('&').map((keyValue) => {
+    const key = keyValue.split('=')[0]
+    const value = keyValue.split('=')[1]
+    return { key, value }
+  })
 
-  return bodyList;
-};
+  return bodyList
+}
 
 exports.handler = async (
   event: APIGatewayProxyEventV2WithJWTAuthorizer,
@@ -144,51 +137,51 @@ exports.handler = async (
     return {
       statusCode: 500,
       headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
       },
-      body: JSON.stringify({}),
-    };
+      body: JSON.stringify({})
+    }
   }
 
-  const bodyList = getBodyParameter(event);
+  const bodyList = getBodyParameter(event)
 
   const description: string = bodyList.filter((element) => {
-    return element["key"] === "description";
-  })[0]["value"];
+    return element.key === 'description'
+  })[0].value
   const fileName: string = bodyList.filter((element) => {
-    return element["key"] === "fileName";
-  })[0]["value"];
+    return element.key === 'fileName'
+  })[0].value
   const filePath: string = bodyList.filter((element) => {
-    return element["key"] === "filePath";
-  })[0]["value"];
+    return element.key === 'filePath'
+  })[0].value
   const isFavorite: string = bodyList.filter((element) => {
-    return element["key"] === "isFavorite";
-  })[0]["value"];
+    return element.key === 'isFavorite'
+  })[0].value
   const travelRecordId: string = bodyList.filter((element) => {
-    return element["key"] === "travelRecordId";
-  })[0]["value"];
+    return element.key === 'travelRecordId'
+  })[0].value
 
-  let status = 200;
-  let response = {};
+  let status = 200
+  let response = {}
   try {
     response = await postPhoto({
-      description: description,
-      fileName: fileName,
-      filePath: filePath,
-      isFavorite: isFavorite,
-      travelRecordId: travelRecordId
-    });
+      description,
+      fileName,
+      filePath,
+      isFavorite,
+      travelRecordId
+    })
   } catch (error) {
-    console.log(error);
-    status = 500;
+    console.log(error)
+    status = 500
   }
   return {
     statusCode: status,
     headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
     },
-    body: JSON.stringify(response),
-  };
-};
+    body: JSON.stringify(response)
+  }
+}
