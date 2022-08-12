@@ -91,6 +91,7 @@ export class Lambda {
   public migrationLambda: lambda.Function
   public postUserLambda: lambda.Function
   public deleteUserLambda: lambda.Function
+  public getUsersLambda: lambda.Function
   public deleteUserByIdLambda: lambda.Function
   public getUserByIdLambda: lambda.Function
   public postTravelRecordLambda: lambda.Function
@@ -136,46 +137,33 @@ export class Lambda {
       entry: path.join(__dirname, '../lambda/function/user/deleteUser.ts'),
       vpc: this.vpc
     })
+    this.getUsersLambda = new PrismaFunction(scope, 'getUsers', {
+      filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+      functionName: 'getUsersLambda',
+      entry: path.join(__dirname, '../lambda/function/user/getUsers.ts'),
+      vpc: this.vpc
+    })
     this.deleteUserByIdLambda = new PrismaFunction(scope, 'deleteUserById', {
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'deleteUserByIdLambda',
       entry: path.join(__dirname, '../lambda/function/user/userId/deleteUserById.ts'),
       vpc: this.vpc
     })
-    this.getUserByIdLambda = new nodeLambda.NodejsFunction(scope, 'getUserById', {
-      bundling: {
-        externalModules: ['sqlite3']
-      },
+    this.getUserByIdLambda = new PrismaFunction(scope, 'getUserById', {
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
-      functionName: 'getUserByIdLambda',
-      // layers: [this.nodeLayer],
-      runtime: lambda.Runtime.NODEJS_16_X,
-      handler: 'handler',
+      functionName: 'deleteUserByIdLambda',
       entry: path.join(__dirname, '../lambda/function/user/userId/getUserById.ts'),
       vpc: this.vpc
     })
-
-    this.postTravelRecordLambda = new nodeLambda.NodejsFunction(scope, 'postTravelRecordLambda', {
-      bundling: {
-        externalModules: ['sqlite3']
-      },
+    this.postTravelRecordLambda = new PrismaFunction(scope, 'postTravelRecordLambda', {
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'postTravelRecordLambda',
-      // layers: [this.nodeLayer],
-      runtime: lambda.Runtime.NODEJS_16_X,
-      handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/travelRecord/createTravelRecord.ts'),
       vpc: this.vpc
     })
-    this.deleteTravelRecordLambda = new nodeLambda.NodejsFunction(scope, 'deleteTravelRecordLambda', {
-      bundling: {
-        externalModules: ['sqlite3']
-      },
+    this.deleteTravelRecordLambda = new PrismaFunction(scope, 'deleteTravelRecordLambda', {
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'deleteTravelRecordLambda',
-      // layers: [this.nodeLayer],
-      runtime: lambda.Runtime.NODEJS_16_X,
-      handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/travelRecord/deleteTravelRecord.ts'),
       vpc: this.vpc
     })

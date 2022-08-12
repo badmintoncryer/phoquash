@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client'
 
 const postUser = async (userName: string) => {
   const prisma = new PrismaClient()
-  console.log({ prisma })
   const registeredUser = await prisma.user.findMany({
     where: {
       userName
