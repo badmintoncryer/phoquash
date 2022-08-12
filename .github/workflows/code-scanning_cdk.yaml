@@ -2,6 +2,8 @@ name: "Code Scanning - Action"
 
 on:
   push:
+    paths:
+      - backend/cdk/**
   schedule:
     #        ┌───────────── minute (0 - 59)
     #        │  ┌───────────── hour (0 - 23)
@@ -13,6 +15,11 @@ on:
     #        │  │ │ │ │
     #        *  * * * *
     - cron: "* */1 * * 0"
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ./backend/cdk
 
 jobs:
   CodeQL-Build:
