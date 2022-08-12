@@ -44,6 +44,12 @@ const postTravel = async (props: postTravelProps): Promise<postTravelReturn> => 
   }
 }
 
+/**
+ * userNameからuserIdを取得する関数
+ *
+ * @param {string} userName
+ * @return {*}  {Promise<number>}
+ */
 const getUserId = async (userName: string): Promise<number> => {
   const prisma = new PrismaClient()
   const users = await prisma.user

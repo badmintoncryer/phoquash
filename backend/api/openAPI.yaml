@@ -60,9 +60,7 @@ paths:
               $ref: "#/components/schemas/travelDataRequestBody"
             example:
               userName: testuser
-              title: Croatia
-              startDate: 1659260770000
-              endDate: 1659360770000
+              travelRecordId: 3
       responses:
         200:
           description: travel削除成功時のレスポンス

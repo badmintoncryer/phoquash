@@ -179,15 +179,9 @@ export class Lambda {
       entry: path.join(__dirname, '../lambda/function/travel/createTravel.ts'),
       vpc: this.vpc
     })
-    this.deleteTravelLambda = new nodeLambda.NodejsFunction(scope, 'deleteTravelLambda', {
-      bundling: {
-        externalModules: ['sqlite3']
-      },
+    this.deleteTravelLambda = new PrismaFunction(scope, 'deleteTravelLambda', {
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'deleteTravelLambda',
-      // layers: [this.nodeLayer],
-      runtime: lambda.Runtime.NODEJS_16_X,
-      handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/travel/deleteTravel.ts'),
       vpc: this.vpc
     })
