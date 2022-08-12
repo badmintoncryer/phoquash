@@ -1,29 +1,25 @@
-import {
-  Context,
-  APIGatewayProxyResult,
-  APIGatewayProxyEventV2WithJWTAuthorizer,
-} from "aws-lambda";
-import sqlite3 = require("sqlite3");
+import { Context, APIGatewayProxyResult, APIGatewayProxyEventV2WithJWTAuthorizer } from 'aws-lambda'
+import sqlite3 = require('sqlite3')
 
 interface userIdType {
-  userId: number;
+  userId: number
 }
 
 interface travelRecordIdType {
-  travelRecordId: number;
+  travelRecordId: number
 }
 interface travelIdType {
-  travelId: number;
+  travelId: number
 }
 
 interface postTravelProps {
-  userName: string;
-  title: string;
-  startDate: number;
-  endDate: number;
+  userName: string
+  title: string
+  startDate: number
+  endDate: number
 }
 const postTravel = async (props: postTravelProps) => {
-  const db = new sqlite3.Database("/mnt/db/phoquash.sqlite3");
+  const db = new sqlite3.Database('/mnt/db/phoquash.sqlite3')
   // const db = new sqlite3.Database(
   //   "/Users/cryershinozukakazuho/git/phoquash/backend/cdk/phoquash.sqlite3"
   // );
@@ -32,101 +28,100 @@ const postTravel = async (props: postTravelProps) => {
     return new Promise((resolve, reject) => {
       db.get(sql, params, (error: any, row: any) => {
         if (error) {
-          reject(error);
+          reject(error)
         }
-        resolve(row);
-      });
-    });
-  };
+        resolve(row)
+      })
+    })
+  }
   const run = (sql: string, ...params: any) => {
     return new Promise<void>((resolve, reject) => {
       db.run(sql, params, (error: any) => {
         if (error) {
-          reject(error);
+          reject(error)
         }
-        resolve();
-      });
-    });
-  };
+        resolve()
+      })
+    })
+  }
   const close = () => {
     return new Promise<void>((resolve, reject) => {
       db.close((error: any) => {
         if (error) {
-          reject(error);
+          reject(error)
         }
-        resolve();
-      });
-    });
-  };
+        resolve()
+      })
+    })
+  }
 
   // userName元にuserIdを取得
-  const userId: userIdType = await get(
-    "SELECT userId FROM user WHERE userName = ?",
-    [props.userName]
-  ).catch((error) => {
-    console.log(error);
-    throw new Error("table error: " + error.message);
-  });
+  const userId: userIdType = await get('SELECT userId FROM user WHERE userName = ?', [props.userName]).catch(
+    (error) => {
+      console.log(error)
+      throw new Error('table error: ' + error.message)
+    }
+  )
   if (!userId || !userId.userId) {
-    throw new Error("userName is not registered in user table");
+    throw new Error('userName is not registered in user table')
   }
 
   // title, start, endからtravelRecordIdを取得
   // travelの登録前にtravelRecordが登録されている必要がある。
   const travelRecordId: travelRecordIdType = await get(
-    "SELECT travelRecordId FROM travelRecord WHERE title = ? and start = ? and end = ? and userId = ?",
+    'SELECT travelRecordId FROM travelRecord WHERE title = ? and start = ? and end = ? and userId = ?',
     [props.title, props.startDate, props.endDate, userId.userId]
   ).catch((error) => {
-    console.log(error);
-    throw new Error("table error: " + error.message);
-  });
+    console.log(error)
+    throw new Error('table error: ' + error.message)
+  })
   if (!travelRecordId || !travelRecordId.travelRecordId) {
-    throw new Error("travelRecord is not registered in travelRecord table");
+    throw new Error('travelRecord is not registered in travelRecord table')
   }
 
-  const registeredTravel = await get(
-    "SELECT travelId FROM travel WHERE userId = ? and travelRecordId = ?",
-    [userId.userId, travelRecordId.travelRecordId]
-  ).catch((error) => {
-    console.log(error);
-    throw new Error("table error: " + error.message);
-  });
+  const registeredTravel = await get('SELECT travelId FROM travel WHERE userId = ? and travelRecordId = ?', [
+    userId.userId,
+    travelRecordId.travelRecordId
+  ]).catch((error) => {
+    console.log(error)
+    throw new Error('table error: ' + error.message)
+  })
 
   // 既に同一のtravelが登録されている場合、これ以上の登録は行わない
   if (registeredTravel) {
     return {
-      status: "OK",
-      message: "same travel is already registered",
-      travelId: registeredTravel.traveId,
-    };
+      status: 'OK',
+      message: 'same travel is already registered',
+      travelId: registeredTravel.traveId
+    }
   }
 
   await run(
-    "INSERT INTO travel(userId,travelRecordId) values(?,?)",
+    'INSERT INTO travel(userId,travelRecordId) values(?,?)',
     userId.userId,
     travelRecordId.travelRecordId
   ).catch((error) => {
-    console.log(error);
-    throw new Error("table error: " + error.message);
-  });
+    console.log(error)
+    throw new Error('table error: ' + error.message)
+  })
 
-  const travelId: travelIdType = await get(
-    "SELECT travelId FROM travel WHERE userId = ? and travelRecordId = ?",
-    [userId.userId, travelRecordId.travelRecordId]
-  ).catch((error) => {
-    throw new Error("table error: " + error.message)
-  });
+  const travelId: travelIdType = await get('SELECT travelId FROM travel WHERE userId = ? and travelRecordId = ?', [
+    userId.userId,
+    travelRecordId.travelRecordId
+  ]).catch((error) => {
+    throw new Error('table error: ' + error.message)
+  })
 
   await close().catch((error) => {
-    throw new Error("table error: " + error.message);
-  });
+    throw new Error('table error: ' + error.message)
+  })
 
   return {
-    status: "OK",
-    message: "travel is successfully registered",
-    travelId: travelId.travelId,
-  };
-};
+    status: 'OK',
+    message: 'travel is successfully registered',
+    travelId: travelId.travelId
+  }
+}
 
 /**
  * cognitoに登録されているIDTokenからユーザー名を取得する
@@ -135,31 +130,28 @@ const postTravel = async (props: postTravelProps) => {
  * @return {*}
  */
 const getuserName = (event: APIGatewayProxyEventV2WithJWTAuthorizer) => {
-  const idToken = event.headers.authorization!.split(" ")[1];
-  const idTokenPayload = idToken.split(".")[1];
-  const decodedIdTokenPayload = Buffer.from(
-    idTokenPayload,
-    "base64"
-  ).toString();
+  const idToken = event.headers.authorization!.split(' ')[1]
+  const idTokenPayload = idToken.split('.')[1]
+  const decodedIdTokenPayload = Buffer.from(idTokenPayload, 'base64').toString()
   const payloadList = decodedIdTokenPayload
-    .replace("{", "")
-    .replace("}", "")
+    .replace('{', '')
+    .replace('}', '')
     // 全ての"を置換する
-    .replace(/"/g, "")
-    .split(",")
+    .replace(/"/g, '')
+    .split(',')
     .map((keyValue) => {
-      console.log(keyValue.split(":").slice(-2));
+      console.log(keyValue.split(':').slice(-2))
       // "key":"value"が基本だが、"cognito:username":"xxx"となっているので、どちらにも対応できるようにしている。
-      const key = keyValue.split(":").slice(-2)[0];
-      const value = keyValue.split(":").slice(-2)[1];
-      return { key: key, value: value };
-    });
+      const key = keyValue.split(':').slice(-2)[0]
+      const value = keyValue.split(':').slice(-2)[1]
+      return { key, value }
+    })
   const cognitoUserName = payloadList.filter((element) => {
-    return element["key"] === "username";
-  })[0]["value"];
+    return element.key === 'username'
+  })[0].value
 
-  return cognitoUserName;
-};
+  return cognitoUserName
+}
 
 /**
  * event引数からbodyパラメータを抜き出す
@@ -169,65 +161,65 @@ const getuserName = (event: APIGatewayProxyEventV2WithJWTAuthorizer) => {
  */
 const getBodyParameter = (event: APIGatewayProxyEventV2WithJWTAuthorizer) => {
   // bodyパラメータを取得し、userNameをデコードする
-  const decodedEventBody = Buffer.from(event.body!, "base64").toString();
-  const bodyList = decodedEventBody.split("&").map((keyValue) => {
-    const key = keyValue.split("=")[0];
-    const value = keyValue.split("=")[1];
-    return { key: key, value: value };
-  });
+  const decodedEventBody = Buffer.from(event.body!, 'base64').toString()
+  const bodyList = decodedEventBody.split('&').map((keyValue) => {
+    const key = keyValue.split('=')[0]
+    const value = keyValue.split('=')[1]
+    return { key, value }
+  })
 
-  return bodyList;
-};
+  return bodyList
+}
 
 exports.handler = async (
   event: APIGatewayProxyEventV2WithJWTAuthorizer,
   _context: Context
 ): Promise<APIGatewayProxyResult> => {
-  console.log({ event });
+  console.log({ event })
   // eventが空の場合早期return
   if (!event || !event.body || !event.headers || !event.headers.authorization) {
     return {
       statusCode: 500,
       headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
       },
-      body: JSON.stringify({}),
-    };
+      body: JSON.stringify({})
+    }
   }
 
-  const userName = getuserName(event);
-  const bodyList = getBodyParameter(event);
+  const userName = getuserName(event)
+  const bodyList = getBodyParameter(event)
 
   const title: string = bodyList.filter((element) => {
-    return element["key"] === "title";
-  })[0]["value"];
+    return element.key === 'title'
+  })[0].value
   const startDate: string = bodyList.filter((element) => {
-    return element["key"] === "start";
-  })[0]["value"];
+    return element.key === 'start'
+  })[0].value
   const endDate: string = bodyList.filter((element) => {
-    return element["key"] === "end";
-  })[0]["value"];
+    return element.key === 'end'
+  })[0].value
 
-  let status = 200;
-  let response = {};
+  let status = 200
+  let response = {}
   try {
     response = await postTravel({
-      userName: userName,
-      title: title,
+      userName,
+      title,
       startDate: Number(startDate),
-      endDate: Number(endDate),
-    });
+      endDate: Number(endDate)
+    })
   } catch (error) {
-    console.log(error);
-    status = 500;
+    console.log(error)
+    status = 500
   }
   return {
     statusCode: status,
     headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
     },
-    body: JSON.stringify(response),
-  };
-};
+    body: JSON.stringify(response)
+  }
+}

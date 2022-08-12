@@ -47,9 +47,6 @@ jobs:
         run: |
           npm install
           npm install -g aws-cdk
-      - name: generate prisma migration files
-        run: |
-          npx prisma migrate dev --name phoquash
       - name: generate prisma client
         run: |
           npx prisma generate
