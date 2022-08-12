@@ -1,5 +1,7 @@
 # Phoquash CDK
 
+[![deploy cdk](https://github.com/badmintoncryer/phoquash/actions/workflows/cdk-deploy.yaml/badge.svg)](https://github.com/badmintoncryer/phoquash/actions/workflows/cdk-deploy.yaml)
+
 ## 構成
 
 CDKによるインフラ構築 + PrismaによるSQLレスなクエリ生成
