@@ -1,9 +1,9 @@
-name: "Code Scanning - Action"
+name: "Code Scanning Frontend - Action"
 
 on:
   push:
     paths:
-      - backend/cdk/**
+      - frontend/**
   schedule:
     #        ┌───────────── minute (0 - 59)
     #        │  ┌───────────── hour (0 - 23)
@@ -19,7 +19,7 @@ on:
 defaults:
   run:
     shell: bash
-    working-directory: ./backend/cdk
+    working-directory: ./frontend
 
 jobs:
   CodeQL-Build:
