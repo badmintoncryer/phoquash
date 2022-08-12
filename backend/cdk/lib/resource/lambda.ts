@@ -51,7 +51,7 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
             // lambdaの容量制限対策
             `rm -rf ${outputDir}/node_modules/@prisma/engines`,
             `cp ${inputDir}/prisma/schema.prisma ${outputDir}`,
-            `cp ${inputDir}/node_modules/@prisma/engines/libquery_engine-rhel-openssl-1.0.x.so.node ${outputDir}`
+            `cp ${inputDir}/node_modules/prisma/libquery_engine-rhel-openssl-1.0.x.so.node ${outputDir}`
           ]
         }
       },
