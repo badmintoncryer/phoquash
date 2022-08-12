@@ -38,8 +38,8 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
         PRISMA_QUERY_ENGINE_LIBRARY: './node_modules/'
       },
       bundling: {
-        forceDockerBundling: false,
-        nodeModules: ['prisma'].concat(props.bundling?.nodeModules ?? []),
+        forceDockerBundling: true,
+        nodeModules: ['prisma', '@prisma/client'].concat(props.bundling?.nodeModules ?? []),
         commandHooks: {
           beforeInstall: (inputDir: string, outputDir: string) => [
             // Copy prisma directory to Lambda code asset
