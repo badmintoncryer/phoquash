@@ -1,44 +1,25 @@
 import { Context, APIGatewayProxyResult, APIGatewayProxyEventV2WithJWTAuthorizer } from 'aws-lambda'
-import sqlite3 = require('sqlite3')
+import { PrismaClient } from '@prisma/client'
 
 interface deleteTravelRecordIdProps {
-  travelRecordId: string
+  travelRecordId: number
 }
-const deleteTravelRecordById = async (props: deleteTravelRecordIdProps) => {
-  const db = new sqlite3.Database('/mnt/db/phoquash.sqlite3')
-  // const db = new sqlite3.Database(
-  //   "/Users/cryershinozukakazuho/git/phoquash/backend/cdk/phoquash.sqlite3"
-  // );
-
-  const run = (sql: string, ...params: any) => {
-    return new Promise<void>((resolve, reject) => {
-      db.run(sql, params, (error: any) => {
-        if (error) {
-          reject(error)
-        }
-        resolve()
-      })
+interface deleteTravelRecordByIdReturn {
+  status: string
+  message: string
+}
+const deleteTravelRecordById = async (props: deleteTravelRecordIdProps): Promise<deleteTravelRecordByIdReturn> => {
+  const prisma = new PrismaClient()
+  await prisma.travelRecord
+    .delete({
+      where: {
+        travelRecordId: props.travelRecordId
+      }
     })
-  }
-  const close = () => {
-    return new Promise<void>((resolve, reject) => {
-      db.close((error: any) => {
-        if (error) {
-          reject(error)
-        }
-        resolve()
-      })
+    .catch((error) => {
+      console.log(error)
+      throw new Error('query error: ' + error.message)
     })
-  }
-
-  await run('DELETE FROM travelRecord WHERE travelRecordId = ?', [props.travelRecordId]).catch((error) => {
-    console.log(error)
-    throw new Error('table error: ' + error.message)
-  })
-
-  await close().catch((error) => {
-    throw new Error('table error: ' + error.message)
-  })
 
   return {
     status: 'OK',
@@ -69,18 +50,15 @@ exports.handler = async (
 
   const apiPath = getApiPath(event)
   // API Pathの最後の要素をpathParameterとして取得
-  const travelRecordId = apiPath.split('/').slice(-1)[0]
+  const travelRecordId = Number(apiPath.split('/').slice(-1)[0])
 
   let status = 200
-  let response = {}
-  try {
-    response = await deleteTravelRecordById({
-      travelRecordId
-    })
-  } catch (error) {
+  const response = await deleteTravelRecordById({
+    travelRecordId
+  }).catch((error) => {
     console.log(error)
     status = 500
-  }
+  })
   return {
     statusCode: status,
     headers: {

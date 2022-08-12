@@ -25,10 +25,10 @@ const createTravelRecord = async (props: postTravelRecordProps): Promise<postTra
       console.log(error)
       throw new Error('query error: ' + error.message)
     })
-  if (registeredTravelRecords !== []) {
+  if (registeredTravelRecords.length !== 0) {
     return {
       status: 'OK',
-      message: 'same travelRecord is already registered'
+      message: 'The same travelRecord is already registered'
     }
   }
 

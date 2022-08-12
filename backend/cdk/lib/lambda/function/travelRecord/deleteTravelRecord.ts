@@ -24,7 +24,7 @@ const deleteTravelRecord = async (props: deleteTravelRecordProps): Promise<delet
       console.log(error)
       throw new Error('query error: ' + error.message)
     })
-  if (registeredTravelRecords === []) {
+  if (registeredTravelRecords.length === 0) {
     return {
       status: 'OK',
       message: 'travelRecord is already removed'
