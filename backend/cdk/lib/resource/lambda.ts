@@ -38,7 +38,7 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
         PRISMA_QUERY_ENGINE_LIBRARY: './node_modules/'
       },
       bundling: {
-        externalModules: ['@plisma/client'],
+        externalModules: ['@prisma/client'],
         forceDockerBundling: false,
         // nodeModules: ['prisma'].concat(props.bundling?.nodeModules ?? []),
         commandHooks: {
