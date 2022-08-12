@@ -39,19 +39,19 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
       },
       bundling: {
         forceDockerBundling: true,
-        nodeModules: ['prisma'].concat(props.bundling?.nodeModules ?? []),
+        // nodeModules: ['prisma'].concat(props.bundling?.nodeModules ?? []),
         commandHooks: {
-          beforeInstall: (inputDir: string, outputDir: string) => [
+          beforeInstall: (_inputDir: string, _outputDir: string) => [
             // Copy prisma directory to Lambda code asset
             // the directory must be located at the same directory as your Lambda code
-            `cp -r ${inputDir}/prisma ${outputDir}`
+            // `cp -r ${inputDir}/prisma ${outputDir}`
           ],
           beforeBundling: (_inputDir: string, _outputDir: string) => [],
           afterBundling: (inputDir: string, outputDir: string) => [
             // lambdaの容量制限対策
-            `rm -rf ${outputDir}/node_modules/@prisma/engines`,
+            // `rm -rf ${outputDir}/node_modules/@prisma/engines`,
             `cp ${inputDir}/prisma/schema.prisma ${outputDir}`,
-            `cp ${inputDir}/node_modules/prisma/libquery_engine-rhel-openssl-1.0.x.so.node ${outputDir}`
+            `cp ${inputDir}/node_modules/.prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node ${outputDir}`
           ]
         }
       },
