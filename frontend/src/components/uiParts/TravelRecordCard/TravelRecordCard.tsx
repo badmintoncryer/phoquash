@@ -1,21 +1,16 @@
-import {
-  Button,
-  Card,
-  CardActions,
-  CardHeader,
-  CardMedia,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import IosShareIcon from "@mui/icons-material/IosShare";
+import React from 'react'
+import { Button, Card, CardActions, CardHeader, CardMedia } from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete'
+import IosShareIcon from '@mui/icons-material/IosShare'
 
 export type TravelRecordCardProps = {
-  title: string;
-  start: Date;
-  end: Date;
-};
+  title: string
+  start: Date
+  end: Date
+}
 
-export const TravelRecordCard = (props: TravelRecordCardProps) => {
-  const period = `${props.start.toLocaleDateString()} - ${props.end.toLocaleDateString()}`;
+const TravelRecordCard: React.FC<TravelRecordCardProps> = (props) => {
+  const period = `${props.start.toLocaleDateString()} - ${props.end.toLocaleDateString()}`
   return (
     <Card raised={true}>
       <CardHeader title={props.title} subheader={period} />
@@ -34,5 +29,7 @@ export const TravelRecordCard = (props: TravelRecordCardProps) => {
         </Button>
       </CardActions>
     </Card>
-  );
-};
+  )
+}
+
+export default TravelRecordCard

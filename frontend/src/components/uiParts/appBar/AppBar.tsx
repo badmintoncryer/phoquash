@@ -1,35 +1,35 @@
-import { useState } from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import MenuIcon from "@mui/icons-material/Menu";
-import { useNavigate } from "react-router-dom";
-import { Grid } from "@mui/material";
-import Logo from "../../../static/logo_transparent.png";
+import React, { useState } from 'react'
+import AppBar from '@mui/material/AppBar'
+import Box from '@mui/material/Box'
+import Toolbar from '@mui/material/Toolbar'
+import Typography from '@mui/material/Typography'
+import IconButton from '@mui/material/IconButton'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import MenuIcon from '@mui/icons-material/Menu'
+import { useNavigate } from 'react-router-dom'
+import { Grid } from '@mui/material'
+import Logo from '../../../static/logo_transparent.png'
 
-export default function ButtonAppBar() {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+const ButtonAppBar: React.FC = () => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+    setAnchorEl(event.currentTarget)
+  }
   const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const navigate = useNavigate();
+    setAnchorEl(null)
+  }
+  const navigate = useNavigate()
   // HOMEページに遷移
   const handleToTopPage = () => {
-    setAnchorEl(null);
-    navigate("/");
-  };
+    setAnchorEl(null)
+    navigate('/')
+  }
   const handleCreate = () => {
-    setAnchorEl(null);
-    navigate("/create");
-  };
+    setAnchorEl(null)
+    navigate('/create')
+  }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -43,9 +43,9 @@ export default function ButtonAppBar() {
                 color="inherit"
                 aria-label="menu"
                 sx={{ mr: 2 }}
-                aria-controls={open ? "basic-menu" : undefined}
+                aria-controls={open ? 'basic-menu' : undefined}
                 aria-haspopup="true"
-                aria-expanded={open ? "true" : undefined}
+                aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
               >
                 <MenuIcon />
@@ -56,7 +56,7 @@ export default function ButtonAppBar() {
                 open={open}
                 onClose={handleClose}
                 MenuListProps={{
-                  "aria-labelledby": "basic-butoon",
+                  'aria-labelledby': 'basic-butoon'
                 }}
               >
                 <MenuItem onClick={handleToTopPage}>HOMEへ戻る</MenuItem>
@@ -81,5 +81,7 @@ export default function ButtonAppBar() {
         </Toolbar>
       </AppBar>
     </Box>
-  );
+  )
 }
+
+export default ButtonAppBar

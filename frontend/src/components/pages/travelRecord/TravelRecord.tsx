@@ -1,3 +1,4 @@
+import React from 'react'
 // import EXIF from "exif-js";
 // import loadImage, { MetaData } from "blueimp-load-image";
 // import picture from "../../../temp/picture/IMG_5309.jpg";
@@ -44,7 +45,9 @@
 // getExifData(url);
 // };
 
-export const TravelRecord = () => {
+const TravelRecord = () => {
   // load();
-  return <div></div>;
-};
+  return <div></div>
+}
+
+export default TravelRecord

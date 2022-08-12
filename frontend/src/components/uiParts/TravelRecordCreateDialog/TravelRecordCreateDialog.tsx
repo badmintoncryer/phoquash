@@ -1,3 +1,10 @@
+import React, {
+  forwardRef,
+  ReactElement,
+  Ref,
+  useCallback,
+  useState
+} from 'react'
 import {
   Slide,
   Dialog,
@@ -8,117 +15,116 @@ import {
   Button,
   Grid,
   ImageList,
-  ImageListItem,
-} from "@mui/material";
-import { TransitionProps } from "@mui/material/transitions";
-import { forwardRef, ReactElement, Ref, useCallback, useState } from "react";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import ImageUploading, { ImageType } from "react-images-uploading";
-import exifer from "exifer";
-import heic2any from "heic2any";
-import { findEXIFinHEIC } from "exif-heic-js/exif-heic";
+  ImageListItem
+} from '@mui/material'
+import { TransitionProps } from '@mui/material/transitions'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
+import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers'
+import ImageUploading, { ImageType } from 'react-images-uploading'
+import exifer from 'exifer'
+import heic2any from 'heic2any'
+import { findEXIFinHEIC } from 'exif-heic-js/exif-heic'
 
 type TravelRecordCreateDialogProps = {
-  open: boolean;
-  onClose: () => void;
-};
+  open: boolean
+  onClose: () => void
+}
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
-    children: ReactElement;
+    children: ReactElement
   },
   ref: Ref<unknown>
 ) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+  return <Slide direction="up" ref={ref} {...props} />
+})
 
 const dataUriToBlob = (dataUri: string): Blob => {
-  const byteString = atob(dataUri.split(",")[1]);
-  const mimeString = dataUri.split(",")[0].split(":")[1].split(";")[0];
+  const byteString = atob(dataUri.split(',')[1])
+  const mimeString = dataUri.split(',')[0].split(':')[1].split(';')[0]
   // write the bytes of the string to an ArrayBuffer
-  const arrayBuffer = new ArrayBuffer(byteString.length);
+  const arrayBuffer = new ArrayBuffer(byteString.length)
 
   // create a view into the buffer
-  const UnsignedIntArray = new Uint8Array(arrayBuffer);
+  const UnsignedIntArray = new Uint8Array(arrayBuffer)
 
   // set the bytes of the buffer to the correct values
-  for (var i = 0; i < byteString.length; i++) {
-    UnsignedIntArray[i] = byteString.charCodeAt(i);
+  for (let i = 0; i < byteString.length; i++) {
+    UnsignedIntArray[i] = byteString.charCodeAt(i)
   }
 
   // write the ArrayBuffer to a blob, and you're done
-  const blob = new Blob([arrayBuffer], { type: mimeString });
-  return blob;
-};
+  const blob = new Blob([arrayBuffer], { type: mimeString })
+  return blob
+}
 
 interface Tags {
-  [index: string]: string;
+  [index: string]: string
 }
 
 interface TagsListElement {
-  fileName: string;
-  tags: Tags;
+  fileName: string
+  tags: Tags
 }
 
 export type pictureListType = {
-  name: string;
-  img: string;
-};
+  name: string
+  img: string
+}
 
-export const TravelRecordCreateDialog = (
-  props: TravelRecordCreateDialogProps
+const TravelRecordCreateDialog: React.FC<TravelRecordCreateDialogProps> = (
+  props
 ) => {
-  const [update, setUpdate] = useState<boolean>(false);
-  const [titleValue, setTitleValue] = useState("");
+  const [update, setUpdate] = useState<boolean>(false)
+  const [titleValue, setTitleValue] = useState('')
   const [travelStartDate, setTravelStartDate] = useState<
     Date | null | undefined
-  >();
+  >()
   const [travelFinishDate, setTravelFinishDate] = useState<
     Date | null | undefined
-  >();
+  >()
 
-  const maxNumber = 100;
-  const [imageList, setImageList] = useState<ImageType[]>([]);
-  const [exifTags, setExifTags] = useState<TagsListElement[]>([]);
+  const maxNumber = 100
+  const [imageList, setImageList] = useState<ImageType[]>([])
+  const [exifTags, setExifTags] = useState<TagsListElement[]>([])
 
   const onClickAdd = useCallback(() => {
-    console.log({ imageList });
-    console.log({ exifTags });
-    props.onClose();
-  }, [exifTags, imageList, props]);
+    console.log({ imageList })
+    console.log({ exifTags })
+    props.onClose()
+  }, [exifTags, imageList, props])
   interface addHeicExifProps {
-    image: ImageType;
+    image: ImageType
   }
   const addHeicExif = useCallback((props: addHeicExifProps) => {
-    const heicReader = new FileReader();
+    const heicReader = new FileReader()
     heicReader.onload = () => {
-      const heicTags = findEXIFinHEIC(heicReader.result);
+      const heicTags = findEXIFinHEIC(heicReader.result)
       setExifTags((exifTags) => {
         // exifTagsに同一ファイル名のオブジェクトが存在するか確認し、その場合には要素の追加を行わない
         if (
           exifTags.some(
             (element) =>
               element.fileName ===
-              props.image.file!.name.split(".")[0] + ".JPEG"
+              props.image.file!.name.split('.')[0] + '.JPEG'
           )
         ) {
-          return exifTags;
+          return exifTags
         }
 
         const newTags: TagsListElement = {
-          fileName: props.image.file!.name.split(".")[0] + ".JPEG",
-          tags: heicTags,
-        };
-        console.log([...exifTags, newTags]);
-        return [...exifTags, newTags];
-      });
-    };
-    heicReader.readAsArrayBuffer(props.image.file!);
-  }, []);
+          fileName: props.image.file!.name.split('.')[0] + '.JPEG',
+          tags: heicTags
+        }
+        console.log([...exifTags, newTags])
+        return [...exifTags, newTags]
+      })
+    }
+    heicReader.readAsArrayBuffer(props.image.file!)
+  }, [])
 
   interface AddExifProps {
-    image: ImageType;
+    image: ImageType
   }
   const addExif = useCallback((props: AddExifProps) => {
     exifer(props.image.file).then((result: Tags) => {
@@ -127,68 +133,68 @@ export const TravelRecordCreateDialog = (
           exifTags.some(
             (element) =>
               element.fileName ===
-              props.image.file!.name.split(".")[0] + ".JPEG"
+              props.image.file!.name.split('.')[0] + '.JPEG'
           )
         ) {
-          return exifTags;
+          return exifTags
         }
         const newTags: TagsListElement = {
           fileName: props.image.file!.name,
-          tags: result,
-        };
-        return [...exifTags, newTags];
-      });
-    });
-  }, []);
+          tags: result
+        }
+        return [...exifTags, newTags]
+      })
+    })
+  }, [])
 
   // Blob型かを判断する関数
   const isBlob = (blobOrBlobList: Blob | Blob[]): blobOrBlobList is Blob => {
-    return (blobOrBlobList as Blob).arrayBuffer() === undefined;
-  };
+    return (blobOrBlobList as Blob).arrayBuffer() === undefined
+  }
 
   const onChange = useCallback(
     (imageList: ImageType[]) => {
       imageList.forEach((image) => {
-        if (image.file && image.data_url && image.file.type === "image/heic") {
-          addHeicExif({ image: image });
+        if (image.file && image.data_url && image.file.type === 'image/heic') {
+          addHeicExif({ image })
           // heicをjpegに変換し、imageListに登録する
           heic2any({
             blob: dataUriToBlob(image.data_url),
-            toType: "image/jpeg",
+            toType: 'image/jpeg'
           }).then((conversionResult) => {
             if (!isBlob(conversionResult)) {
-              console.error("conversionResult is not Blob");
-              return;
+              console.error('conversionResult is not Blob')
+              return
             }
-            const dataUrlReader = new FileReader();
+            const dataUrlReader = new FileReader()
             dataUrlReader.onload = (event) => {
-              image.data_url = event.target!.result;
+              image.data_url = event.target!.result
               image.file = new File(
                 [conversionResult],
-                image.file!.name.split(".")[0] + ".JPEG",
+                image.file!.name.split('.')[0] + '.JPEG',
                 {
                   lastModified: 0,
-                  type: "image/jpeg",
+                  type: 'image/jpeg'
                 }
-              );
-              setImageList(imageList);
+              )
+              setImageList(imageList)
               setTimeout(() => {
-                setUpdate(!update);
-              }, 500);
-            };
-            dataUrlReader.readAsDataURL(conversionResult);
-          });
+                setUpdate(!update)
+              }, 500)
+            }
+            dataUrlReader.readAsDataURL(conversionResult)
+          })
         }
         // exif形式以外の画像の処理
-        else if (image.file && image.file.type !== "image/heic") {
-          addExif({ image: image });
+        else if (image.file && image.file.type !== 'image/heic') {
+          addExif({ image })
         }
-      });
-      setImageList(imageList);
+      })
+      setImageList(imageList)
       // setUpdate(!update);
     },
     [addExif, addHeicExif, update]
-  );
+  )
 
   return (
     <Dialog
@@ -245,7 +251,7 @@ export const TravelRecordCreateDialog = (
               onChange={onChange}
               maxNumber={maxNumber}
               dataURLKey="data_url"
-              acceptType={["jpg", "gif", "png", "heic"]}
+              acceptType={['jpg', 'gif', 'png', 'heic']}
             >
               {({
                 imageList,
@@ -254,7 +260,7 @@ export const TravelRecordCreateDialog = (
                 // onImageUpdate,
                 // onImageRemove,
                 isDragging,
-                dragProps,
+                dragProps
               }) => (
                 <div>
                   <Grid
@@ -268,7 +274,7 @@ export const TravelRecordCreateDialog = (
                       <Button
                         variant="contained"
                         component="label"
-                        style={isDragging ? { color: "red" } : undefined}
+                        style={isDragging ? { color: 'red' } : undefined}
                         onClick={onImageUpload}
                         {...dragProps}
                         sx={{ width: 180 }}
@@ -290,7 +296,7 @@ export const TravelRecordCreateDialog = (
                   </Grid>
                   <ImageList
                     sx={{
-                      width: { xs: 350, sm: 500, md: 500, lg: 500, xl: 500 },
+                      width: { xs: 350, sm: 500, md: 500, lg: 500, xl: 500 }
                     }}
                     cols={3}
                     rowHeight={164}
@@ -300,14 +306,14 @@ export const TravelRecordCreateDialog = (
                         <div key={index}>
                           <ImageListItem key={index}>
                             <img
-                              src={`${image["data_url"]}`}
+                              src={`${image.data_url}`}
                               alt=""
                               loading="lazy"
-                              id={image.file?.name || "test"}
+                              id={image.file?.name || 'test'}
                             />
                           </ImageListItem>
                         </div>
-                      );
+                      )
                     })}
                   </ImageList>
                 </div>
@@ -325,5 +331,7 @@ export const TravelRecordCreateDialog = (
         </Button>
       </DialogActions>
     </Dialog>
-  );
-};
+  )
+}
+
+export default TravelRecordCreateDialog

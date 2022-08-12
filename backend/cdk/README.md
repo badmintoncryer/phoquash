@@ -1,6 +1,7 @@
 # Phoquash CDK
 
 [![deploy cdk](https://github.com/badmintoncryer/phoquash/actions/workflows/cdk-deploy.yaml/badge.svg)](https://github.com/badmintoncryer/phoquash/actions/workflows/cdk-deploy.yaml)
+[![Code Scanning CDK - Action](https://github.com/badmintoncryer/phoquash/actions/workflows/code-scanning-cdk.yaml/badge.svg)](https://github.com/badmintoncryer/phoquash/actions/workflows/code-scanning-cdk.yaml)
 
 ## 構成
 

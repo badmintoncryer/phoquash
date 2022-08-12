@@ -1,7 +1,11 @@
-import { AuthEventData, CognitoUserAmplify } from '@aws-amplify/ui-react/node_modules/@aws-amplify/ui'
-import { Home } from 'components/pages/home/Home'
-import { Picture } from 'components/pages/picture/Picture'
-import { TravelRecord } from 'components/pages/travelRecord/TravelRecord'
+import React from 'react'
+import {
+  AuthEventData,
+  CognitoUserAmplify
+} from '@aws-amplify/ui-react/node_modules/@aws-amplify/ui'
+import Home from 'components/pages/home/Home'
+import Picture from 'components/pages/picture/Picture'
+import TravelRecord from 'components/pages/travelRecord/TravelRecord'
 import AppBar from 'components/uiParts/appBar/AppBar'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
@@ -10,7 +14,7 @@ export type MainProps = {
   user?: CognitoUserAmplify
 }
 
-export const Main = (props: MainProps) => {
+const Main: React.FC<MainProps> = (_props) => {
   return (
     <main>
       <BrowserRouter>
@@ -18,7 +22,10 @@ export const Main = (props: MainProps) => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/travel-record/" element={<TravelRecord />} />
-          <Route path="/travel-record/{travelId}/{pictureId}" element={<Picture />} />
+          <Route
+            path="/travel-record/{travelId}/{pictureId}"
+            element={<Picture />}
+          />
         </Routes>
       </BrowserRouter>
     </main>
@@ -32,3 +39,5 @@ export const Main = (props: MainProps) => {
     // </main>
   )
 }
+
+export default Main
