@@ -38,6 +38,7 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
         PRISMA_QUERY_ENGINE_LIBRARY: './node_modules/'
       },
       bundling: {
+        externalModules: ['@plisma/client'],
         forceDockerBundling: false,
         // nodeModules: ['prisma'].concat(props.bundling?.nodeModules ?? []),
         commandHooks: {
@@ -51,7 +52,9 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
             // lambdaの容量制限対策
             // `rm -rf ${outputDir}/node_modules/@prisma/engines`,
             `cp ${inputDir}/prisma/schema.prisma ${outputDir}`,
-            `cp ${inputDir}/node_modules/.prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node ${outputDir}`
+            `cp ${inputDir}/node_modules/.prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node ${outputDir}`,
+            `cp ${inputDir}/node_modules/.prisma/client ${outputDir}/node_modules/.prisma`,
+            `cp ${inputDir}/node_modules/@prisma ${outputDir}/node_modules`
           ]
         }
       },
