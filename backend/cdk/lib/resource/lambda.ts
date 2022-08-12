@@ -38,26 +38,28 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
         PRISMA_QUERY_ENGINE_LIBRARY: './node_modules/'
       },
       bundling: {
-        externalModules: ['@prisma/client'],
+        nodeModules: ['@prisma/client', 'prisma'],
         forceDockerBundling: false,
         // nodeModules: ['prisma'].concat(props.bundling?.nodeModules ?? []),
         commandHooks: {
-          beforeInstall: (_inputDir: string, _outputDir: string) => [
+          beforeInstall: (inputDir: string, outputDir: string) => [
             // Copy prisma directory to Lambda code asset
             // the directory must be located at the same directory as your Lambda code
-            // `cp -r ${inputDir}/prisma ${outputDir}`
+            `cp -r ${inputDir}/prisma ${outputDir}`
           ],
           beforeBundling: (_inputDir: string, _outputDir: string) => [],
           afterBundling: (inputDir: string, outputDir: string) => [
-            // lambdaの容量制限対策
-            // `rm -rf ${outputDir}/node_modules/@prisma/engines`,
+            // prisma動作に必要なschema, engineをlambdaのhomeディレクトリにコピー
             `cp ${inputDir}/prisma/schema.prisma ${outputDir}`,
             `cp ${inputDir}/node_modules/.prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node ${outputDir}`,
-            `mkdir ${outputDir}/node_modules && cp -r ${inputDir}/node_modules/@prisma ${outputDir}/node_modules`,
-            `mkdir ${outputDir}/node_modules/.prisma && cp -r ${inputDir}/node_modules/.prisma/client ${outputDir}/node_modules/.prisma`
+            `cp -r ${inputDir}/node_modules/.prisma/client ${outputDir}/node_modules/.prisma`,
+            // lambdaの容量制限対策
+            `rm -rf ${outputDir}/node_modules/@prisma/engines`,
+            `rm -f ${outputDir}/node_modules/prisma/*engine*`
           ]
         }
       },
+      timeout: Duration.minutes(1),
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler'
     })
@@ -114,14 +116,14 @@ export class Lambda {
     // lambdaの容量制限を回避すべくDockerコンテナ型のlambdaとした。
     // その他queryのみ行うlambdaは@prismaから不要なengineを削除することでlambdaの容量制限を回避できるため、
     // nodejsFunctionを用いている。
-    this.migrationLambda = new DockerPrismaFunction(scope, 'migration', {
-      code: DockerImageCode.fromImageAsset('./'),
-      memorySize: 256,
-      timeout: Duration.minutes(5),
-      filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
-      functionName: 'migrationLambda',
-      vpc: this.vpc
-    })
+    // this.migrationLambda = new DockerPrismaFunction(scope, 'migration', {
+    //   code: DockerImageCode.fromImageAsset('./'),
+    //   memorySize: 256,
+    //   timeout: Duration.minutes(5),
+    //   filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+    //   functionName: 'migrationLambda',
+    //   vpc: this.vpc
+    // })
     this.postUserLambda = new PrismaFunction(scope, 'postUser', {
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'postUserLambda',

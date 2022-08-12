@@ -2,15 +2,14 @@ import { Context, APIGatewayProxyResult, APIGatewayProxyEventV2WithJWTAuthorizer
 import { PrismaClient } from '@prisma/client'
 
 const postUser = async (userName: string) => {
-  console.log('postUser is called')
   const prisma = new PrismaClient()
+  console.log({ prisma })
   const registeredUser = await prisma.user.findMany({
     where: {
       userName
     }
   })
-  console.log({ registeredUser })
-  if (registeredUser) {
+  if (registeredUser.length !== 0) {
     return {
       status: 'OK',
       message: 'user is already existed',
@@ -22,7 +21,7 @@ const postUser = async (userName: string) => {
       userName
     }
   })
-  console.log({ user })
+
   return {
     status: 'OK',
     message: 'user is successfully registered',
@@ -64,10 +63,8 @@ exports.handler = async (
   event: APIGatewayProxyEventV2WithJWTAuthorizer,
   _context: Context
 ): Promise<APIGatewayProxyResult> => {
-  console.log('handler is called')
   // eventが空の場合早期return
   if (!event || !event.body) {
-    console.log('event is invalid')
     return {
       statusCode: 500,
       headers: {
