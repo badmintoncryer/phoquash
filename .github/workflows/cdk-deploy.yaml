@@ -13,6 +13,10 @@ defaults:
 
 env:
   AWS_ROLE_ARN: arn:aws:iam::214794239830:role/PhoquashGithubActionsDeployRole
+  FACEBOOK_CLIENT_ID: ${{ secrets.FACEBOOK_CLIENT_ID }}
+  FACEBOOK_CLIENT_SECRET: ${{ secrets.FACEBOOK_CLIENT_SECRET }}
+  GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+  GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
 
 permissions:
   id-token: write
