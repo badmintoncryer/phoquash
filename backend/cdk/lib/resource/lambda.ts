@@ -1,9 +1,11 @@
 import { Construct } from 'constructs'
+import { Duration } from 'aws-cdk-lib'
 import * as efs from 'aws-cdk-lib/aws-efs'
 import * as lambda from 'aws-cdk-lib/aws-lambda'
 import * as nodeLambda from 'aws-cdk-lib/aws-lambda-nodejs'
 import * as ec2 from 'aws-cdk-lib/aws-ec2'
 import * as path from 'path'
+import { DockerImageCode } from 'aws-cdk-lib/aws-lambda'
 
 const MOUNT_PATH = '/mnt/db'
 const DB_NAME = 'phoquash.sqlite3'
@@ -26,6 +28,7 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
     super(scope, id, {
       ...props,
       environment: {
+        ...props.environment,
         DATABASE_URL: props.database?.url || `file:${MOUNT_PATH}/${DB_NAME}`,
         DATABASE_HOST: props.database?.host || '',
         DATABASE_PORT: props.database?.port || '',
@@ -34,8 +37,8 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
         DATABASE_PASSWORD: props.database?.password || ''
       },
       bundling: {
-        externalModules: ['sqlite3'],
-        nodeModules: ['@prisma/client', 'prisma'].concat(props.bundling?.nodeModules ?? []),
+        forceDockerBundling: false,
+        nodeModules: ['@prisma/client'].concat(props.bundling?.nodeModules ?? []),
         commandHooks: {
           beforeInstall: (inputDir: string, outputDir: string) => [
             // Copy prisma directory to Lambda code asset
@@ -43,7 +46,11 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
             `cp -r ${inputDir}/prisma ${outputDir}`
           ],
           beforeBundling: (_inputDir: string, _outputDir: string) => [],
-          afterBundling: (_inputDir: string, _outputDir: string) => []
+          afterBundling: (_inputDir: string, outputDir: string) => [
+            // lambdaの容量制限対策
+            `rm -rf ${outputDir}/node_modules/@prisma/engines`
+            // `cp -r ${inputDir}/node_modules/prisma ${outputDir}/node_modules`
+          ]
         }
       },
       runtime: lambda.Runtime.NODEJS_16_X,
@@ -52,8 +59,68 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
   }
 }
 
+// interface PrismaMigrationFunctionProps extends nodeLambda.NodejsFunctionProps {
+//   database?: DatabaseConnectionProps
+// }
+
+// class PrismaMigrationFunction extends nodeLambda.NodejsFunction {
+//   constructor(scope: Construct, id: string, props: PrismaMigrationFunctionProps) {
+//     super(scope, id, {
+//       ...props,
+//       environment: {
+//         ...props.environment,
+//         DATABASE_URL: props.database?.url || `file:${MOUNT_PATH}/${DB_NAME}`,
+//         DATABASE_HOST: props.database?.host || '',
+//         DATABASE_PORT: props.database?.port || '',
+//         DATABASE_ENGINE: props.database?.engine || '',
+//         DATABASE_USER: props.database?.username || '',
+//         DATABASE_PASSWORD: props.database?.password || ''
+//       },
+//       bundling: {
+//         forceDockerBundling: false,
+//         nodeModules: ['@prisma/client', 'prisma'].concat(props.bundling?.nodeModules ?? []),
+//         commandHooks: {
+//           beforeInstall: (inputDir: string, outputDir: string) => [
+//             // Copy prisma directory to Lambda code asset
+//             // the directory must be located at the same directory as your Lambda code
+//             `cp -r ${inputDir}/prisma ${outputDir}`
+//           ],
+//           beforeBundling: (_inputDir: string, _outputDir: string) => [],
+//           afterBundling: (_inputDir: string, outputDir: string) => [
+//             // lambdaの容量制限対策のため、ファイルサイズの大きいprisma enginesを削除する
+//             `find ${outputDir}/node_modules/prisma -type f | grep 'query-engine-darwin' | xargs rm -rf`
+//           ]
+//         }
+//       },
+//       runtime: lambda.Runtime.NODEJS_16_X,
+//       handler: 'handler',
+//       timeout: Duration.minutes(4)
+//     })
+//   }
+// }
+
+interface DockerPrismaFunctionProps extends lambda.DockerImageFunctionProps {
+  database?: DatabaseConnectionProps
+}
+
+export class DockerPrismaFunction extends lambda.DockerImageFunction {
+  constructor(scope: Construct, id: string, props: DockerPrismaFunctionProps) {
+    super(scope, id, {
+      ...props,
+      environment: {
+        ...props.environment,
+        DATABASE_URL: props.database?.url || `file:${MOUNT_PATH}/${DB_NAME}`,
+        DATABASE_HOST: props.database?.host || '',
+        DATABASE_PORT: props.database?.port || '',
+        DATABASE_ENGINE: props.database?.engine || '',
+        DATABASE_USER: props.database?.username || '',
+        DATABASE_PASSWORD: props.database?.password || ''
+      }
+    })
+  }
+}
+
 export class Lambda {
-  public createDbLambda: lambda.Function
   public migrationLambda: lambda.Function
   public postUserLambda: lambda.Function
   public deleteUserLambda: lambda.Function
@@ -85,63 +152,38 @@ export class Lambda {
       layerVersionName: 'node-layer'
     })
 
-    this.createDbLambda = new nodeLambda.NodejsFunction(scope, 'createDb', {
-      bundling: {
-        externalModules: ['sqlite3']
-      },
-      filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
-      functionName: 'createDbLambda',
-      layers: [this.nodeLayer],
-      runtime: lambda.Runtime.NODEJS_16_X,
-      handler: 'handler',
-      entry: path.join(__dirname, '../lambda/function/createDb/index.ts'),
-      vpc: this.vpc
-    })
-    this.migrationLambda = new PrismaFunction(scope, 'migration', {
+    this.migrationLambda = new DockerPrismaFunction(scope, 'migration', {
+      code: DockerImageCode.fromImageAsset('./'),
+      // bundling: {
+      //   dockerImage: DockerImage.fromBuild('./')
+      // },
+      memorySize: 256,
+      timeout: Duration.minutes(5),
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'migrationLambda',
-      entry: path.join(__dirname, '../lambda/function/migration/index.ts'),
       vpc: this.vpc
     })
+    // this.migrationLambda = new PrismaMigrationFunction(scope, 'migration', {
+    //   filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+    //   functionName: 'migrationLambda',
+    //   entry: path.join(__dirname, '../lambda/function/migration/index.ts'),
+    //   vpc: this.vpc
+    // })
     this.postUserLambda = new PrismaFunction(scope, 'postUser', {
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'postUserLambda',
-      layers: [this.nodeLayer],
       entry: path.join(__dirname, '../lambda/function/user/createUser.ts'),
       vpc: this.vpc
     })
-    // this.postUserLambda = new nodeLambda.NodejsFunction(scope, 'postUser', {
-    //   bundling: {
-    //     externalModules: ['sqlite3']
-    //   },
-    //   filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
-    //   layers: [this.nodeLayer],
-    //   runtime: lambda.Runtime.NODEJS_16_X,
-    //   handler: 'handler',
-    //   entry: path.join(__dirname, '../lambda/function/user/createUser.ts'),
-    //   vpc: this.vpc
-    // })
-    this.deleteUserLambda = new nodeLambda.NodejsFunction(scope, 'deleteUser', {
-      bundling: {
-        externalModules: ['sqlite3']
-      },
+    this.deleteUserLambda = new PrismaFunction(scope, 'deleteUser', {
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'deleteUserLambda',
-      layers: [this.nodeLayer],
-      runtime: lambda.Runtime.NODEJS_16_X,
-      handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/user/deleteUser.ts'),
       vpc: this.vpc
     })
-    this.deleteUserByIdLambda = new nodeLambda.NodejsFunction(scope, 'deleteUserById', {
-      bundling: {
-        externalModules: ['sqlite3']
-      },
+    this.deleteUserByIdLambda = new PrismaFunction(scope, 'deleteUserById', {
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'deleteUserByIdLambda',
-      layers: [this.nodeLayer],
-      runtime: lambda.Runtime.NODEJS_16_X,
-      handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/user/userId/deleteUserById.ts'),
       vpc: this.vpc
     })
