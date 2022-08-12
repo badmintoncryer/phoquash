@@ -46,10 +46,10 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
             `cp -r ${inputDir}/prisma ${outputDir}`
           ],
           beforeBundling: (_inputDir: string, _outputDir: string) => [],
-          afterBundling: (_inputDir: string, outputDir: string) => [
+          afterBundling: (inputDir: string, outputDir: string) => [
             // lambdaの容量制限対策
-            `rm -rf ${outputDir}/node_modules/@prisma/engines`
-            // `cp -r ${inputDir}/node_modules/prisma ${outputDir}/node_modules`
+            `rm -rf ${outputDir}/node_modules/@prisma/engines`,
+            `cp ${inputDir}/prisma/schema.prisma ${outputDir}`
           ]
         }
       },
