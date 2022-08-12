@@ -105,12 +105,6 @@ export class Lambda {
   }
 
   public createResources(scope: Construct) {
-    // this.nodeLayer = new lambda.LayerVersion(scope, 'nodeLayer', {
-    //   code: lambda.Code.fromAsset(path.join(__dirname, '../lambda/layer')),
-    //   compatibleRuntimes: [lambda.Runtime.NODEJS_16_X],
-    //   description: 'node layer',
-    //   layerVersionName: 'node-layer'
-    // })
     // migrationにはnode_modules/@prisma, prismaのいずれのパッケージがすべて必要だったため、
     // lambdaの容量制限を回避すべくDockerコンテナ型のlambdaとした。
     // その他queryのみ行うlambdaは@prismaから不要なengineを削除することでlambdaの容量制限を回避できるため、
