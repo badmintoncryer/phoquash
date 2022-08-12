@@ -34,7 +34,8 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
         DATABASE_PORT: props.database?.port || '',
         DATABASE_ENGINE: props.database?.engine || '',
         DATABASE_USER: props.database?.username || '',
-        DATABASE_PASSWORD: props.database?.password || ''
+        DATABASE_PASSWORD: props.database?.password || '',
+        PRISMA_QUERY_ENGINE_LIBRARY: './node_modules/'
       },
       bundling: {
         forceDockerBundling: false,
@@ -49,7 +50,8 @@ class PrismaFunction extends nodeLambda.NodejsFunction {
           afterBundling: (inputDir: string, outputDir: string) => [
             // lambdaの容量制限対策
             `rm -rf ${outputDir}/node_modules/@prisma/engines`,
-            `cp ${inputDir}/prisma/schema.prisma ${outputDir}`
+            `cp ${inputDir}/prisma/schema.prisma ${outputDir}`,
+            `cp ${inputDir}/node_modules/@prisma/engines/libquery_engine-rhel-openssl-1.0.x.so.node ${outputDir}`
           ]
         }
       },
