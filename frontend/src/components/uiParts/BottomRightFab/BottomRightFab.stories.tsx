@@ -1,7 +1,7 @@
 import React from 'react'
 import { ComponentStory, ComponentMeta } from '@storybook/react'
 import AddIcon from '@mui/icons-material/Add'
-import { BottomRightFab } from './BottomRightFab'
+import BottomRightFab from './BottomRightFab'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

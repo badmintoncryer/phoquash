@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react'
 
 type UseIdTokenReturn = {
-  idToken: string;
-  setIdToken: React.Dispatch<React.SetStateAction<string>>;
-};
+  idToken: string
+  setIdToken: React.Dispatch<React.SetStateAction<string>>
+}
 
 /**
  * localStorageに保存されたidTokenを取得するフック
@@ -11,23 +11,23 @@ type UseIdTokenReturn = {
  * @return {UseIdTokenReturn}
  */
 export const useIdToken = (): UseIdTokenReturn => {
-  const [idToken, setIdToken] = useState<string>("");
+  const [idToken, setIdToken] = useState<string>('')
   useEffect(() => {
     // cognitoがlocalStorageにidTokenを保存するので、
     // keyにidTokenの文字が含まれる要素を取得する
-    const localStorage = window.localStorage;
+    const localStorage = window.localStorage
     for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
+      const key = localStorage.key(i)
       if (!key) {
-        return;
+        return
       }
-      const value = localStorage.getItem(key);
-      if (value && key.includes("idToken")) {
-        setIdToken(value);
-        break;
+      const value = localStorage.getItem(key)
+      if (value && key.includes('idToken')) {
+        setIdToken(value)
+        break
       }
     }
-  }, []);
+  }, [])
 
-  return { idToken: idToken, setIdToken: setIdToken };
-};
+  return { idToken: idToken, setIdToken: setIdToken }
+}
