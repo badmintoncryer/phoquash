@@ -13,7 +13,7 @@ const getUsers = async (): Promise<getUsersReturn> => {
 
   return {
     status: 'OK',
-    message: 'user is successfully registered',
+    message: 'user is successfully queried',
     users: registeredUsers
   }
 }
