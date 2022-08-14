@@ -185,15 +185,9 @@ export class Lambda {
       entry: path.join(__dirname, '../lambda/function/travel/deleteTravel.ts'),
       vpc: this.vpc
     })
-    this.deleteTravelByIdLambda = new nodeLambda.NodejsFunction(scope, 'deleteTravelByIdLambda', {
-      bundling: {
-        externalModules: ['sqlite3']
-      },
+    this.deleteTravelByIdLambda = new PrismaFunction(scope, 'deleteTravelByIdLambda', {
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'deleteTravelByIdLambda',
-      // layers: [this.nodeLayer],
-      runtime: lambda.Runtime.NODEJS_16_X,
-      handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/travel/travelId/deleteTravelById.ts'),
       vpc: this.vpc
     })
@@ -203,7 +197,6 @@ export class Lambda {
       },
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'getTravelByIdLambda',
-      // layers: [this.nodeLayer],
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/travel/travelId/getTravelById.ts'),
@@ -221,7 +214,6 @@ export class Lambda {
       },
       functionName: 'uploadPhotoDataLambda',
       runtime: lambda.Runtime.NODEJS_16_X,
-      // layers: [this.nodeLayer],
       handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/photoData/uploadPhotoData.ts'),
       environment: {
