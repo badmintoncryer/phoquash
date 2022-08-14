@@ -205,7 +205,7 @@ export class Lambda {
     this.postPhotoLambda = new PrismaFunction(scope, 'postPhotoLambda', {
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'postPhotoLambda',
-      entry: path.join(__dirname, '../lambda/function/photo/postPhoto.ts'),
+      entry: path.join(__dirname, '../lambda/function/photo/createPhoto.ts'),
       vpc: this.vpc
     })
     this.uploadPhotoDataLambda = new nodeLambda.NodejsFunction(scope, 'uploadPhotoLambda', {
