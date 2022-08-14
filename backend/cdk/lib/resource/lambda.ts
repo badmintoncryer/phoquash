@@ -96,6 +96,7 @@ export class Lambda {
   public getUserByIdLambda: lambda.Function
   public postTravelRecordLambda: lambda.Function
   public deleteTravelRecordLambda: lambda.Function
+  public getTravelRecordsLambda: lambda.Function
   public deleteTravelRecordByIdLambda: lambda.Function
   public postTravelLambda: lambda.Function
   public deleteTravelLambda: lambda.Function
@@ -165,6 +166,12 @@ export class Lambda {
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'deleteTravelRecordLambda',
       entry: path.join(__dirname, '../lambda/function/travelRecord/deleteTravelRecord.ts'),
+      vpc: this.vpc
+    })
+    this.getTravelRecordsLambda = new PrismaFunction(scope, 'getTravelRecordsLambda', {
+      filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
+      functionName: 'getTravelRecordsLambda',
+      entry: path.join(__dirname, '../lambda/function/travelRecord/getTravelRecords.ts'),
       vpc: this.vpc
     })
     this.deleteTravelRecordByIdLambda = new PrismaFunction(scope, 'deleteTravelRecordByIdLambda', {

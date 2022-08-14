@@ -18,6 +18,7 @@ export class ApiGateway {
   private readonly getUserByIdLambda: lambda.Function
   private readonly postTravelRecordLambda: lambda.Function
   private readonly deleteTravelRecordLambda: lambda.Function
+  private readonly getTravelRecordsLambda: lambda.Function
   private readonly deleteTravelRecordByIdLambda: lambda.Function
   private readonly postTravelLambda: lambda.Function
   private readonly deleteTravelLambda: lambda.Function
@@ -35,6 +36,7 @@ export class ApiGateway {
     getUserByIdLambda: lambda.Function,
     postTravelRecordLambda: lambda.Function,
     deleteTravelRecordLambda: lambda.Function,
+    getTravelRecordsLambda: lambda.Function,
     deleteTravelRecordByIdLambda: lambda.Function,
     postTravelLambda: lambda.Function,
     deleteTravelLambda: lambda.Function,
@@ -51,6 +53,7 @@ export class ApiGateway {
     this.getUserByIdLambda = getUserByIdLambda
     this.postTravelRecordLambda = postTravelRecordLambda
     this.deleteTravelRecordLambda = deleteTravelRecordLambda
+    this.getTravelRecordsLambda = getTravelRecordsLambda
     this.deleteTravelRecordByIdLambda = deleteTravelRecordByIdLambda
     this.postTravelLambda = postTravelLambda
     this.deleteTravelLambda = deleteTravelLambda
@@ -121,6 +124,12 @@ export class ApiGateway {
       methods: [apigw.HttpMethod.DELETE],
       path: '/travelRecord',
       integration: new intg.HttpLambdaIntegration('phoquashScenarioIntegration', this.deleteTravelRecordLambda),
+      authorizer
+    })
+    this.httpApi.addRoutes({
+      methods: [apigw.HttpMethod.GET],
+      path: '/travelRecord',
+      integration: new intg.HttpLambdaIntegration('phoquashScenarioIntegration', this.getTravelRecordsLambda),
       authorizer
     })
     this.httpApi.addRoutes({

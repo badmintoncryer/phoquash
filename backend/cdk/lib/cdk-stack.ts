@@ -36,6 +36,7 @@ export class CdkStack extends Stack {
       lambda.getUserByIdLambda,
       lambda.postTravelRecordLambda,
       lambda.deleteTravelRecordLambda,
+      lambda.getTravelRecordsLambda,
       lambda.deleteTravelRecordByIdLambda,
       lambda.postTravelLambda,
       lambda.deleteTravelLambda,
