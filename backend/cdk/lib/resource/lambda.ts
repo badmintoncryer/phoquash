@@ -191,14 +191,9 @@ export class Lambda {
       entry: path.join(__dirname, '../lambda/function/travel/travelId/deleteTravelById.ts'),
       vpc: this.vpc
     })
-    this.getTravelByIdLambda = new nodeLambda.NodejsFunction(scope, 'getTravelByIdLambda', {
-      bundling: {
-        externalModules: ['sqlite3']
-      },
+    this.getTravelByIdLambda = new PrismaFunction(scope, 'getTravelByIdLambda', {
       filesystem: lambda.FileSystem.fromEfsAccessPoint(this.accessPoint, MOUNT_PATH),
       functionName: 'getTravelByIdLambda',
-      runtime: lambda.Runtime.NODEJS_16_X,
-      handler: 'handler',
       entry: path.join(__dirname, '../lambda/function/travel/travelId/getTravelById.ts'),
       vpc: this.vpc
     })
